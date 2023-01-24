@@ -102,35 +102,6 @@
       </tags>
   </entry>
   <entry>
-    <title>「Private」About My Dream</title>
-    <url>/Porse/960f91b8.html</url>
-    <content><![CDATA[<h2 id="Dream-List"><a href="#Dream-List" class="headerlink" title="Dream List"></a>Dream List</h2><ul>
-<li><input checked="" disabled="" type="checkbox"> 看一场演唱会（五月天）</li>
-<li><input checked="" disabled="" type="checkbox"> 省外旅行一次（非跟团）</li>
-<li><input disabled="" type="checkbox"> <del>国外旅行一次（非跟团）</del></li>
-<li><input disabled="" type="checkbox"> 玩一次蹦极</li>
-<li><input disabled="" type="checkbox"> 与爱人坐一次摩天轮</li>
-<li><input disabled="" type="checkbox"> 学一门自己喜欢的编程语言（python）</li>
-<li><input checked="" disabled="" type="checkbox"> 能处于一个融洽的开发团队</li>
-</ul>
-<br>
-
-<ul>
-<li><input disabled="" type="checkbox"> 看一场演唱会（华晨宇）</li>
-<li><input disabled="" type="checkbox"> 养一只狗</li>
-<li><input disabled="" type="checkbox"> 买房（能光着脚丫走动）</li>
-<li><input disabled="" type="checkbox"> 用吉他弹一首曲</li>
-<li><input disabled="" type="checkbox"> 滑板做一次Ollie</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Porse</category>
-      </categories>
-      <tags>
-        <tag>Dream</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Archlinux+Windows10双系统安装教程</title>
     <url>/Linux/2a8a344e.html</url>
     <content><![CDATA[<p>　—— 本文主要针对的是使用<code>BIOS</code>和<code>MBR</code>的计算机，不过考虑到目前都开始使用支持<code>UEFI</code>的机器<br>　—— 并且可能由于部分原因需要使用<code>GPT</code>，所以附上相关安装方法，但安装方法本人尚未测试。</p>
@@ -643,6 +614,56 @@
       </tags>
   </entry>
   <entry>
+    <title>「Scrapy」爬虫过程中避免被禁的几个小方法</title>
+    <url>/Technique/8cd17fc.html</url>
+    <content><![CDATA[<h3 id="0x01-动态设置-UserAgent"><a href="#0x01-动态设置-UserAgent" class="headerlink" title="0x01. 动态设置 UserAgent"></a>0x01. 动态设置 UserAgent</h3><blockquote>
+<p>通过不停地切换<code>UserAgent</code> ，模拟使用不同的浏览器访问</p>
+</blockquote>
+<p>推荐使用<a href="https://github.com/hellysmile/fake-useragent"><code>fake-useragent</code></a>，为我们提供了众多的<code>UserAgent</code>，而且使用方法也简单<br><br></p>
+<h4 id="a-安装fake-useragent"><a href="#a-安装fake-useragent" class="headerlink" title="a. 安装fake-useragent"></a>a. 安装<code>fake-useragent</code></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install fake-useragent        <span class="comment"># fake-useragent详细用法可查阅Github上的文档</span></span><br></pre></td></tr></table></figure>
+<br>
+
+
+
+<h4 id="b-添加middleware"><a href="#b-添加middleware" class="headerlink" title="b. 添加middleware"></a>b. 添加<code>middleware</code></h4><p>添加下面内容到<code>middlewares.py</code>，主要是重写<code>process_request()</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 动态设置UserAgent，可自定义浏览器类型，如chrome、firefox等，需要在settings.py中设置，不设置默认会返回random</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RandomUserAgentMiddlewares</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, crawler</span>):</span><br><span class="line">        self.ua = UserAgent()</span><br><span class="line">        self.ua_type = crawler.settings.get(<span class="string">&#x27;RANDOM_UA_TYPE&#x27;</span>, <span class="string">&#x27;random&#x27;</span>)        <span class="comment"># 自定义获取的浏览器类型</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">from_crawler</span>(<span class="params">cls, crawler</span>):</span><br><span class="line">        <span class="keyword">return</span> cls(crawler)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">process_request</span>(<span class="params">self, request, spider</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">get_ua</span>():</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">getattr</span>(self.ua, self.ua_type)</span><br><span class="line">        request.headers.setdefault(<span class="string">&#x27;User-Agent&#x27;</span>, get_ua())</span><br></pre></td></tr></table></figure>
+
+<p>在<code>settings.py</code>中关闭默认的<code>UserAgentMiddleware</code>，启用自定义的<code>RandomUserAgentMiddlewares</code>，并设置<code>fake-useragent</code>默认的<code>UserAgent</code>类型</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOADER_MIDDLEWARES = &#123;</span><br><span class="line">    <span class="string">&#x27;scrapy.downloadermiddlewares.useragent.UserAgentMiddleware&#x27;</span>: <span class="literal">None</span>,</span><br><span class="line">    <span class="string">&#x27;tutorial.middlewares.RandomUserAgentMiddlewares&#x27;</span>: <span class="number">543</span>,</span><br><span class="line">&#125;</span><br><span class="line">RANDOM_UA_TYPE = <span class="string">&#x27;chrome&#x27;</span>        <span class="comment"># 左边的key是自定义的，能配合middlewares中的参数获取即可</span></span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h3 id="0x02-禁用Cookie"><a href="#0x02-禁用Cookie" class="headerlink" title="0x02. 禁用Cookie"></a>0x02. 禁用Cookie</h3><blockquote>
+<p>在<code>settings.py</code>中禁用<code>cookie</code>，部分免登陆的网站会在<code>cookie</code>中做标记，判断是否是爬虫</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">COOKIES_ENABLED = <span class="literal">False</span>            <span class="comment"># 在spider中直接设置也可以</span></span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h3 id="0x03-设置延迟下载"><a href="#0x03-设置延迟下载" class="headerlink" title="0x03. 设置延迟下载"></a>0x03. 设置延迟下载</h3><blockquote>
+<p>在从同一网站下载连续页面之前应等待的时间</p>
+</blockquote>
+<p>同样是修改<code>settings.py</code>，设置延迟下载，尽量地模拟人工操作</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOAD_DELAY = <span class="number">3</span>            <span class="comment"># 在spider中直接设置也可以</span></span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h3 id="0x04-动态-ip-代理"><a href="#0x04-动态-ip-代理" class="headerlink" title="0x04. 动态 ip 代理"></a>0x04. 动态 ip 代理</h3><blockquote>
+<p>网站常用的反爬虫就是封 ip 一段时间，所以我们可以设置动态的 ip 代理解决</p>
+</blockquote>
+<p>跟<a href="#b-%E6%B7%BB%E5%8A%A0-middleware">0x01.b</a>差不多，添加<code>middleware</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RandomProxyMiddlewares</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">process_request</span>(<span class="params">self, request, spider</span>):</span><br><span class="line">        proxy = rq.get(<span class="string">&#x27;http://localhost:5000/api&#x27;</span>).text    <span class="comment"># 这是我自己的接口，请求成功直接返回代理 39.104.75.54:8080</span></span><br><span class="line">        request.meta[<span class="string">&#x27;proxy&#x27;</span>] = <span class="string">&#x27;http://&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(proxy)</span><br></pre></td></tr></table></figure>
+
+<p>在<code>settings.py</code>中启用<code>MIDDLEWARES</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOADER_MIDDLEWARES = &#123;</span><br><span class="line">    <span class="comment"># &#x27;tutorial.middlewares.RandomUserAgentMiddlewares&#x27;: 543,</span></span><br><span class="line">    <span class="comment"># &#x27;scrapy.downloadermiddlewares.useragent.UserAgentMiddleware&#x27;: None,</span></span><br><span class="line">    <span class="string">&#x27;tutorial.middlewares.RandomProxyMiddlewares&#x27;</span>: <span class="number">544</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<blockquote>
+<p>到这里就没啦，贴一下 scrapy 官网提供的方法：<a href="https://doc.scrapy.org/en/master/topics/practices.html#avoiding-getting-banned">avoiding-getting-banned</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Technique</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo搭建个人静态博客到GitPages</title>
     <url>/Technique/2d7e24e8.html</url>
     <content><![CDATA[<p>这是 18 年在Archlinux上的安装步骤，现在使用的是Windows10，做少量修改和补充，大致原理还是一样。<span id="more"></span>之前使用的是<a href="https://github.com/iissnan/hexo-theme-next">iissnan&#x2F;hexo-theme-next</a>，现在更换为<a href="https://github.com/theme-next/hexo-theme-next">theme-next&#x2F;hexo-theme-next</a></p>
@@ -758,56 +779,6 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>「Scrapy」爬虫过程中避免被禁的几个小方法</title>
-    <url>/Technique/8cd17fc.html</url>
-    <content><![CDATA[<h3 id="0x01-动态设置-UserAgent"><a href="#0x01-动态设置-UserAgent" class="headerlink" title="0x01. 动态设置 UserAgent"></a>0x01. 动态设置 UserAgent</h3><blockquote>
-<p>通过不停地切换<code>UserAgent</code> ，模拟使用不同的浏览器访问</p>
-</blockquote>
-<p>推荐使用<a href="https://github.com/hellysmile/fake-useragent"><code>fake-useragent</code></a>，为我们提供了众多的<code>UserAgent</code>，而且使用方法也简单<br><br></p>
-<h4 id="a-安装fake-useragent"><a href="#a-安装fake-useragent" class="headerlink" title="a. 安装fake-useragent"></a>a. 安装<code>fake-useragent</code></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install fake-useragent        <span class="comment"># fake-useragent详细用法可查阅Github上的文档</span></span><br></pre></td></tr></table></figure>
-<br>
-
-
-
-<h4 id="b-添加middleware"><a href="#b-添加middleware" class="headerlink" title="b. 添加middleware"></a>b. 添加<code>middleware</code></h4><p>添加下面内容到<code>middlewares.py</code>，主要是重写<code>process_request()</code></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 动态设置UserAgent，可自定义浏览器类型，如chrome、firefox等，需要在settings.py中设置，不设置默认会返回random</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RandomUserAgentMiddlewares</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, crawler</span>):</span><br><span class="line">        self.ua = UserAgent()</span><br><span class="line">        self.ua_type = crawler.settings.get(<span class="string">&#x27;RANDOM_UA_TYPE&#x27;</span>, <span class="string">&#x27;random&#x27;</span>)        <span class="comment"># 自定义获取的浏览器类型</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">from_crawler</span>(<span class="params">cls, crawler</span>):</span><br><span class="line">        <span class="keyword">return</span> cls(crawler)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">process_request</span>(<span class="params">self, request, spider</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">get_ua</span>():</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">getattr</span>(self.ua, self.ua_type)</span><br><span class="line">        request.headers.setdefault(<span class="string">&#x27;User-Agent&#x27;</span>, get_ua())</span><br></pre></td></tr></table></figure>
-
-<p>在<code>settings.py</code>中关闭默认的<code>UserAgentMiddleware</code>，启用自定义的<code>RandomUserAgentMiddlewares</code>，并设置<code>fake-useragent</code>默认的<code>UserAgent</code>类型</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOADER_MIDDLEWARES = &#123;</span><br><span class="line">    <span class="string">&#x27;scrapy.downloadermiddlewares.useragent.UserAgentMiddleware&#x27;</span>: <span class="literal">None</span>,</span><br><span class="line">    <span class="string">&#x27;tutorial.middlewares.RandomUserAgentMiddlewares&#x27;</span>: <span class="number">543</span>,</span><br><span class="line">&#125;</span><br><span class="line">RANDOM_UA_TYPE = <span class="string">&#x27;chrome&#x27;</span>        <span class="comment"># 左边的key是自定义的，能配合middlewares中的参数获取即可</span></span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h3 id="0x02-禁用Cookie"><a href="#0x02-禁用Cookie" class="headerlink" title="0x02. 禁用Cookie"></a>0x02. 禁用Cookie</h3><blockquote>
-<p>在<code>settings.py</code>中禁用<code>cookie</code>，部分免登陆的网站会在<code>cookie</code>中做标记，判断是否是爬虫</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">COOKIES_ENABLED = <span class="literal">False</span>            <span class="comment"># 在spider中直接设置也可以</span></span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h3 id="0x03-设置延迟下载"><a href="#0x03-设置延迟下载" class="headerlink" title="0x03. 设置延迟下载"></a>0x03. 设置延迟下载</h3><blockquote>
-<p>在从同一网站下载连续页面之前应等待的时间</p>
-</blockquote>
-<p>同样是修改<code>settings.py</code>，设置延迟下载，尽量地模拟人工操作</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOAD_DELAY = <span class="number">3</span>            <span class="comment"># 在spider中直接设置也可以</span></span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h3 id="0x04-动态-ip-代理"><a href="#0x04-动态-ip-代理" class="headerlink" title="0x04. 动态 ip 代理"></a>0x04. 动态 ip 代理</h3><blockquote>
-<p>网站常用的反爬虫就是封 ip 一段时间，所以我们可以设置动态的 ip 代理解决</p>
-</blockquote>
-<p>跟<a href="#b-%E6%B7%BB%E5%8A%A0-middleware">0x01.b</a>差不多，添加<code>middleware</code></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RandomProxyMiddlewares</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">process_request</span>(<span class="params">self, request, spider</span>):</span><br><span class="line">        proxy = rq.get(<span class="string">&#x27;http://localhost:5000/api&#x27;</span>).text    <span class="comment"># 这是我自己的接口，请求成功直接返回代理 39.104.75.54:8080</span></span><br><span class="line">        request.meta[<span class="string">&#x27;proxy&#x27;</span>] = <span class="string">&#x27;http://&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(proxy)</span><br></pre></td></tr></table></figure>
-
-<p>在<code>settings.py</code>中启用<code>MIDDLEWARES</code></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOADER_MIDDLEWARES = &#123;</span><br><span class="line">    <span class="comment"># &#x27;tutorial.middlewares.RandomUserAgentMiddlewares&#x27;: 543,</span></span><br><span class="line">    <span class="comment"># &#x27;scrapy.downloadermiddlewares.useragent.UserAgentMiddleware&#x27;: None,</span></span><br><span class="line">    <span class="string">&#x27;tutorial.middlewares.RandomProxyMiddlewares&#x27;</span>: <span class="number">544</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<blockquote>
-<p>到这里就没啦，贴一下 scrapy 官网提供的方法：<a href="https://doc.scrapy.org/en/master/topics/practices.html#avoiding-getting-banned">avoiding-getting-banned</a></p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Technique</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Scrapy</tag>
       </tags>
   </entry>
   <entry>
@@ -1011,6 +982,56 @@
       </tags>
   </entry>
   <entry>
+    <title>「Scrapy」自定义图片管道ImagesPipeline下载图片</title>
+    <url>/Technique/aa344f5b.html</url>
+    <content><![CDATA[<p>题外话：前些天不是重新搭建了hexo吗，然后今天有个知识点忘记了，想看看之前的笔记，结果发现，没了，是真的没了！！沃日，之前重新搭建的时候忘记备份了，因为Windows下有一份旧资料，恰巧那份旧资料是几乎没同步过，所以出事了…	教训：<font color="red">凡事记得先备份！！</font></p>
+<hr>
+<p><br><br></p>
+<h2 id="一、使用场景"><a href="#一、使用场景" class="headerlink" title="一、使用场景"></a>一、使用场景</h2><p>当我们在抓取某些资源的时候，刚好同时想下载它的图片的时候，就可以用到<code>scrapy</code>提供的一个<code>item pipeline</code>，这条管道被称作图片管道，在<a href="https://scrapy-chs.readthedocs.io/zh_CN/latest/topics/images.html#scrapy.contrib.pipeline.images.ImagesPipeline">ImagesPipeline</a>类中实现，提供了一个方便并具有额外特性的方法，来下载并本地存储图片:</p>
+<ul>
+<li>将所有下载的图片转换成通用的格式（JPG）和模式（RGB）</li>
+<li>避免重新下载最近已经下载过的图片</li>
+<li>缩略图生成</li>
+<li>检测图像的宽&#x2F;高，确保它们满足最小限制<br><br><br></li>
+</ul>
+<h2 id="二、项目实战"><a href="#二、项目实战" class="headerlink" title="二、项目实战"></a>二、项目实战</h2><p>这里直接使用自定义的方法，以便于自定义我们图片的名称、下载路径<br><br></p>
+<h3 id="0x01-定义一个Item"><a href="#0x01-定义一个Item" class="headerlink" title="0x01. 定义一个Item"></a>0x01. 定义一个Item</h3><p>在<code>items.py</code>中新建一个<code>class</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"></span><br><span class="line"><span class="comment">## 这里我只定义两个属性，标题用于存储图片的父目录，链接截取一部分当图片名称</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ImageItem</span>(scrapy.Item):</span><br><span class="line">    image_urls = scrapy.Field()        <span class="comment"># 图片链接</span></span><br><span class="line">    alt = scrapy.Field()        <span class="comment"># 图片标题</span></span><br></pre></td></tr></table></figure>
+<br>
+
+<h3 id="0x02-配置settings-py"><a href="#0x02-配置settings-py" class="headerlink" title="0x02. 配置settings.py"></a>0x02. 配置<code>settings.py</code></h3><p>在<code>settings.py</code>中修改或添加以下信息</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启用图片管道动能，MyImagesPipeline是我自定义的class，在下面的步骤会进行创建</span></span><br><span class="line">ITEM_PIPELINES = &#123;<span class="string">&#x27;meituba.pipelines.MyImagesPipeline&#x27;</span>: <span class="number">1</span>,&#125;</span><br><span class="line">IMAGES_STORE = <span class="string">&#x27;images&#x27;</span>                <span class="comment"># 存储的根目录</span></span><br></pre></td></tr></table></figure>
+
+<p>如果需要生成缩略图：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 当前默认存储路径为&lt;IMAGES_STORE&gt;/thumbs/big和&lt;IMAGES_STORE&gt;/thumbs/small</span></span><br><span class="line">IMAGES_THUMBS = &#123;</span><br><span class="line">    <span class="string">&#x27;small&#x27;</span>: (<span class="number">50</span>, <span class="number">50</span>),            <span class="comment"># key和value均可自定义</span></span><br><span class="line">    <span class="string">&#x27;big&#x27;</span>: (<span class="number">270</span>, <span class="number">270</span>),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果需要过滤过小的图片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 过滤图片高度小于170、宽度小于260的图片</span></span><br><span class="line">IMAGES_MIN_HEIGHT = <span class="number">170</span></span><br><span class="line">IMAGES_MIN_WIDTH = <span class="number">260</span></span><br></pre></td></tr></table></figure>
+
+<p>如果需要忽略近期已经下载过的图片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 90天的图片失效期限</span></span><br><span class="line">IMAGES_EXPIRES = <span class="number">90</span></span><br></pre></td></tr></table></figure>
+<br>
+
+<h3 id="0x03-自定义图片管道"><a href="#0x03-自定义图片管道" class="headerlink" title="0x03. 自定义图片管道"></a>0x03. 自定义图片管道</h3><p>在<code>pipelines.py</code>中重写<code>file_path()</code>，达到自定义图片存储位置和自定义图片名称的效果</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> scrapy.pipelines.images <span class="keyword">import</span> ImagesPipeline</span><br><span class="line"><span class="keyword">from</span> scrapy.http <span class="keyword">import</span> Request</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyImagesPipeline</span>(<span class="title class_ inherited__">ImagesPipeline</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_media_requests</span>(<span class="params">self, item, info</span>):</span><br><span class="line">        sign = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> image_url <span class="keyword">in</span> item[<span class="string">&#x27;image_urls&#x27;</span>]:</span><br><span class="line">            sign += <span class="number">1</span></span><br><span class="line">            <span class="keyword">yield</span> Request(url=image_url, meta=&#123;<span class="string">&#x27;item&#x27;</span>: item, <span class="string">&#x27;sign&#x27;</span>: sign&#125;)</span><br><span class="line">    <span class="comment"># 重写file_path()，自定义存储文件夹名字和图片名字</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">file_path</span>(<span class="params">self, request, response=<span class="literal">None</span>, info=<span class="literal">None</span></span>):</span><br><span class="line">        item = request.meta[<span class="string">&#x27;item&#x27;</span>]</span><br><span class="line">        sign = request.meta[<span class="string">&#x27;sign&#x27;</span>]-<span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;%s/%s&#x27;</span> % (item[<span class="string">&#x27;alt&#x27;</span>][sign], request.url.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>])</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 重写thumb_path()，自定义缩略图文件名</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">thumb_path</span>(<span class="params">self, request, thumb_id, response=<span class="literal">None</span>, info=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;thumbs/%s/%s&#x27;</span> % (thumb_id, request.url.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<br>
+
+<h3 id="0x04-编写spider"><a href="#0x04-编写spider" class="headerlink" title="0x04. 编写spider"></a>0x04. 编写spider</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> Spider</span><br><span class="line"><span class="keyword">from</span> meituba.items <span class="keyword">import</span> ImageItem</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MeituSpider</span>(<span class="title class_ inherited__">Spider</span>):</span><br><span class="line">    name = <span class="string">&quot;meitu&quot;</span></span><br><span class="line">    <span class="comment"># allowed_domains = [&quot;meituba.com&quot;]</span></span><br><span class="line">    start_urls = [<span class="string">&#x27;http://www.meituba.com/tag/xueshengmei.html&#x27;</span>]</span><br><span class="line">    download_delay = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">parse</span>(<span class="params">self, response</span>):</span><br><span class="line">        item = ImageItem()</span><br><span class="line">        image_urls = response.xpath(<span class="string">&#x27;/html/body/div[4]/div[1]/div[2]/ul/li/div[1]/a/img/@src&#x27;</span>).extract()</span><br><span class="line">        alt = response.xpath(<span class="string">&#x27;/html/body/div[4]/div[1]/div[2]/ul/li/div[1]/a/img/@alt&#x27;</span>).extract()</span><br><span class="line">        item[<span class="string">&#x27;image_urls&#x27;</span>] = image_urls</span><br><span class="line">        item[<span class="string">&#x27;alt&#x27;</span>] = alt</span><br><span class="line">        <span class="keyword">yield</span> item</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="三、效果展示"><a href="#三、效果展示" class="headerlink" title="三、效果展示"></a>三、效果展示</h2><p>运行<code>scrapy crawl meitu</code>， 即可查看效果<br><br><br></p>
+<blockquote>
+<p>ps：凡事先看官网文档：（<a href="https://scrapy-chs.readthedocs.io/zh_CN/latest/topics/images.html">中文文档</a>非官方，英文好的可以看<a href="https://docs.scrapy.org/en/latest">英文官方网站</a>）</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Technique</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>利用PyInstaller打包发布exe程序</title>
     <url>/Technique/53934d9f.html</url>
     <content><![CDATA[<p>在Windows下每次运行python脚本都得打开CMD，简直难受得一批！找了一下可以打包成exe程序的库，事情一下子就轻松得多了！<br><br><br></p>
@@ -1050,6 +1071,35 @@
       <tags>
         <tag>Python</tag>
         <tag>PyInstaller</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>「Private」About My Dream</title>
+    <url>/Porse/960f91b8.html</url>
+    <content><![CDATA[<h2 id="Dream-List"><a href="#Dream-List" class="headerlink" title="Dream List"></a>Dream List</h2><ul>
+<li><input checked="" disabled="" type="checkbox"> 看一场演唱会（五月天）</li>
+<li><input checked="" disabled="" type="checkbox"> 省外旅行一次（非跟团）</li>
+<li><input disabled="" type="checkbox"> <del>国外旅行一次（非跟团）</del></li>
+<li><input disabled="" type="checkbox"> 玩一次蹦极</li>
+<li><input disabled="" type="checkbox"> 与爱人坐一次摩天轮</li>
+<li><input disabled="" type="checkbox"> 学一门自己喜欢的编程语言（python）</li>
+<li><input checked="" disabled="" type="checkbox"> 能处于一个融洽的开发团队</li>
+</ul>
+<br>
+
+<ul>
+<li><input disabled="" type="checkbox"> 看一场演唱会（华晨宇）</li>
+<li><input disabled="" type="checkbox"> 养一只狗</li>
+<li><input disabled="" type="checkbox"> 买房（能光着脚丫走动）</li>
+<li><input disabled="" type="checkbox"> 用吉他弹一首曲</li>
+<li><input disabled="" type="checkbox"> 滑板做一次Ollie</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Porse</category>
+      </categories>
+      <tags>
+        <tag>Dream</tag>
       </tags>
   </entry>
   <entry>
@@ -1099,6 +1149,58 @@
       <tags>
         <tag>Python</tag>
         <tag>Script</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>正则表达式</title>
+    <url>/Rules/2f57a694.html</url>
+    <content><![CDATA[<h3 id="1-界定符"><a href="#1-界定符" class="headerlink" title="1. 界定符"></a>1. 界定符</h3><ul>
+<li>界定符<br>  表示一个正则表达式的开始和结束　<code>//</code>　<code>##</code>　<code>&#123;&#125;</code><br>  但<code>&#123;&#125;</code>也可用作正则表达式的运算符，为避免产生歧义，通常不用<code>&#123;&#125;</code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/[0-9]/&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<br><br></li>
+</ul>
+<h3 id="2-原子概念"><a href="#2-原子概念" class="headerlink" title="2. 原子概念"></a>2. 原子概念</h3><ul>
+<li><p>可见原子<br>  <code>Unicode</code>编码表中用键盘输出后肉眼可见的字符</p>
+</li>
+<li><p>不可见原子<br>  <code>Unicode</code>编码表中用键盘输出后肉眼不可见的字符，例如空格等<br>  <br><br></p>
+</li>
+</ul>
+<h3 id="3-元字符"><a href="#3-元字符" class="headerlink" title="3. 元字符"></a>3. 元字符</h3><ul>
+<li><p>原子的筛选方式<br>  - 　 <code>|</code> 　 　 　匹配两个或多个分支选择<br>  -　 <code>[]</code> 　　 　匹配方括号中的任意一个原子<br>  -　<code>[^]</code>　　　匹配除方括号中的原子之外的任意字符，<code>^</code>必须跟在左方括号后面</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">[Dd]uang~  等同于  Duang~|duang~</span><br><span class="line">[a-zA-Z] 与 [a-z A-Z] 所匹配到的字符不一样,后者多匹配一个空格符</span><br></pre></td></tr></table></figure>
+<br>
+
+</li>
+<li><p>原子的集合<br>- 　 <code>.</code>　　　　匹配除换行符之外的任意字符，注：<code>.</code>不是专一匹配符号<br>-　<code>\d</code>　　　　匹配任意一个十进制数字，即<code>[0-9]</code><br>-　<code>\D</code>　　　　匹配任意一个非十进制数字，即<code>[^0-9]</code><br>-　<code>\s</code>　　　　匹配一个不可见原子，即<code>[\f\n\r\t\v]</code><br>-　<code>\S</code>　　　　匹配一个可见原子，即<code>[^\f\n\r\t\v]</code><br>-　<code>\w</code>　　　　匹配任意一个数字、字母或下划线，即<code>[0-9a-zA-Z_]</code><br>-　<code>\W</code>　　　　匹配任意一个非数字、字母或下划线，即<code>[^0-9a-zA-Z_]</code><br><br><br></p>
+</li>
+</ul>
+<h3 id="4-量词"><a href="#4-量词" class="headerlink" title="4. 量词"></a>4. 量词</h3><ul>
+<li>量词<br>  -　<code>&#123;n&#125;</code>　　　　　表示其前面的原子恰好出现<code>n</code>次<br>  -　<code>&#123;n,&#125;</code>　　 　 　表示其前面的原子最少出现<code>n</code>次<br>  -　<code>&#123;n,m&#125;</code>　　　　表示其前面的原子最少出现<code>n</code>次，最多出现<code>m</code>次<br>  -　<code>*</code>　　　　　　匹配0次、1次或多次其之前的院子，即<code>&#123;0,&#125;</code><br>  -　<code>+</code>　　　　　　匹配1次或多次其之前的原子，即<code>&#123;1,&#125;</code><br>  -　<code>?</code>　　　　　　匹配0次或1次其之前的原子，即<code>&#123;0,1&#125;</code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">[a-z]&#123;<span class="number">4</span>,<span class="number">5</span>&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<p><br><br></p>
+<h3 id="5-其他"><a href="#5-其他" class="headerlink" title="5. 其他"></a>5. 其他</h3><ul>
+<li><p>边界控制&#x2F;定位符<br>　　-　<code>^</code>　　　　匹配字符串开始的位置<br>　　-　<code>$</code>　　　　匹配字符串结束的位置<br>　　-　<code>()</code>　 　 　匹配其中的整体为一个原子</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">　　^Duang$　　　　强制必须以D开头，前面不能有其它内容，必须以g结尾</span><br><span class="line">　　(Duang)　　　　匹配一个整体Duang，当作一个原子对待</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>修正模式&#x2F;修饰符<br>　　贪婪匹配<br>　　　　　　　　　-　匹配结果存在歧义是取其长</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/China.+123/&#x27;</span>;</span><br><span class="line">$subject = <span class="string">&#x27;I love China_123123123123&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta"># result:    China_123123123123</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>懒惰匹配<br>　　　-　匹配结果存在歧义是取其短</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/China.+123/U&#x27;</span>;</span><br><span class="line">$subject = <span class="string">&#x27;I love China_123123123123&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta"># result:    China_123</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>*！　默认模式为贪婪匹配，若改为懒惰匹配只需要在界定符的后面加<code>U</code></p>
+<p>　　常见的修正模式<br>　　-　<code>U</code>　懒惰匹配<br>　　-　<code>i</code>　忽略英文大小写<br>　　-　<code>x</code>　忽略空白<br>　　-　<code>s</code>　让元字符<code>.</code>匹配包括换行符在内的所有字符</p>
+<p>　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　—— This is all.   2016.05.06</p>
+]]></content>
+      <categories>
+        <category>Rules</category>
+      </categories>
+      <tags>
+        <tag>Regex</tag>
       </tags>
   </entry>
   <entry>
@@ -1263,108 +1365,6 @@
       </categories>
       <tags>
         <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>正则表达式</title>
-    <url>/Rules/2f57a694.html</url>
-    <content><![CDATA[<h3 id="1-界定符"><a href="#1-界定符" class="headerlink" title="1. 界定符"></a>1. 界定符</h3><ul>
-<li>界定符<br>  表示一个正则表达式的开始和结束　<code>//</code>　<code>##</code>　<code>&#123;&#125;</code><br>  但<code>&#123;&#125;</code>也可用作正则表达式的运算符，为避免产生歧义，通常不用<code>&#123;&#125;</code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/[0-9]/&#x27;</span>;</span><br></pre></td></tr></table></figure>
-<br><br></li>
-</ul>
-<h3 id="2-原子概念"><a href="#2-原子概念" class="headerlink" title="2. 原子概念"></a>2. 原子概念</h3><ul>
-<li><p>可见原子<br>  <code>Unicode</code>编码表中用键盘输出后肉眼可见的字符</p>
-</li>
-<li><p>不可见原子<br>  <code>Unicode</code>编码表中用键盘输出后肉眼不可见的字符，例如空格等<br>  <br><br></p>
-</li>
-</ul>
-<h3 id="3-元字符"><a href="#3-元字符" class="headerlink" title="3. 元字符"></a>3. 元字符</h3><ul>
-<li><p>原子的筛选方式<br>  - 　 <code>|</code> 　 　 　匹配两个或多个分支选择<br>  -　 <code>[]</code> 　　 　匹配方括号中的任意一个原子<br>  -　<code>[^]</code>　　　匹配除方括号中的原子之外的任意字符，<code>^</code>必须跟在左方括号后面</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">[Dd]uang~  等同于  Duang~|duang~</span><br><span class="line">[a-zA-Z] 与 [a-z A-Z] 所匹配到的字符不一样,后者多匹配一个空格符</span><br></pre></td></tr></table></figure>
-<br>
-
-</li>
-<li><p>原子的集合<br>- 　 <code>.</code>　　　　匹配除换行符之外的任意字符，注：<code>.</code>不是专一匹配符号<br>-　<code>\d</code>　　　　匹配任意一个十进制数字，即<code>[0-9]</code><br>-　<code>\D</code>　　　　匹配任意一个非十进制数字，即<code>[^0-9]</code><br>-　<code>\s</code>　　　　匹配一个不可见原子，即<code>[\f\n\r\t\v]</code><br>-　<code>\S</code>　　　　匹配一个可见原子，即<code>[^\f\n\r\t\v]</code><br>-　<code>\w</code>　　　　匹配任意一个数字、字母或下划线，即<code>[0-9a-zA-Z_]</code><br>-　<code>\W</code>　　　　匹配任意一个非数字、字母或下划线，即<code>[^0-9a-zA-Z_]</code><br><br><br></p>
-</li>
-</ul>
-<h3 id="4-量词"><a href="#4-量词" class="headerlink" title="4. 量词"></a>4. 量词</h3><ul>
-<li>量词<br>  -　<code>&#123;n&#125;</code>　　　　　表示其前面的原子恰好出现<code>n</code>次<br>  -　<code>&#123;n,&#125;</code>　　 　 　表示其前面的原子最少出现<code>n</code>次<br>  -　<code>&#123;n,m&#125;</code>　　　　表示其前面的原子最少出现<code>n</code>次，最多出现<code>m</code>次<br>  -　<code>*</code>　　　　　　匹配0次、1次或多次其之前的院子，即<code>&#123;0,&#125;</code><br>  -　<code>+</code>　　　　　　匹配1次或多次其之前的原子，即<code>&#123;1,&#125;</code><br>  -　<code>?</code>　　　　　　匹配0次或1次其之前的原子，即<code>&#123;0,1&#125;</code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">[a-z]&#123;<span class="number">4</span>,<span class="number">5</span>&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<hr>
-<p><br><br></p>
-<h3 id="5-其他"><a href="#5-其他" class="headerlink" title="5. 其他"></a>5. 其他</h3><ul>
-<li><p>边界控制&#x2F;定位符<br>　　-　<code>^</code>　　　　匹配字符串开始的位置<br>　　-　<code>$</code>　　　　匹配字符串结束的位置<br>　　-　<code>()</code>　 　 　匹配其中的整体为一个原子</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">　　^Duang$　　　　强制必须以D开头，前面不能有其它内容，必须以g结尾</span><br><span class="line">　　(Duang)　　　　匹配一个整体Duang，当作一个原子对待</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>修正模式&#x2F;修饰符<br>　　贪婪匹配<br>　　　　　　　　　-　匹配结果存在歧义是取其长</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/China.+123/&#x27;</span>;</span><br><span class="line">$subject = <span class="string">&#x27;I love China_123123123123&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta"># result:    China_123123123123</span></span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>懒惰匹配<br>　　　-　匹配结果存在歧义是取其短</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/China.+123/U&#x27;</span>;</span><br><span class="line">$subject = <span class="string">&#x27;I love China_123123123123&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta"># result:    China_123</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>*！　默认模式为贪婪匹配，若改为懒惰匹配只需要在界定符的后面加<code>U</code></p>
-<p>　　常见的修正模式<br>　　-　<code>U</code>　懒惰匹配<br>　　-　<code>i</code>　忽略英文大小写<br>　　-　<code>x</code>　忽略空白<br>　　-　<code>s</code>　让元字符<code>.</code>匹配包括换行符在内的所有字符</p>
-<p>　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　—— This is all.   2016.05.06</p>
-]]></content>
-      <categories>
-        <category>Rules</category>
-      </categories>
-      <tags>
-        <tag>Regex</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>「Scrapy」自定义图片管道ImagesPipeline下载图片</title>
-    <url>/Technique/aa344f5b.html</url>
-    <content><![CDATA[<p>题外话：前些天不是重新搭建了hexo吗，然后今天有个知识点忘记了，想看看之前的笔记，结果发现，没了，是真的没了！！沃日，之前重新搭建的时候忘记备份了，因为Windows下有一份旧资料，恰巧那份旧资料是几乎没同步过，所以出事了…	教训：<font color="red">凡事记得先备份！！</font></p>
-<hr>
-<p><br><br></p>
-<h2 id="一、使用场景"><a href="#一、使用场景" class="headerlink" title="一、使用场景"></a>一、使用场景</h2><p>当我们在抓取某些资源的时候，刚好同时想下载它的图片的时候，就可以用到<code>scrapy</code>提供的一个<code>item pipeline</code>，这条管道被称作图片管道，在<a href="https://scrapy-chs.readthedocs.io/zh_CN/latest/topics/images.html#scrapy.contrib.pipeline.images.ImagesPipeline">ImagesPipeline</a>类中实现，提供了一个方便并具有额外特性的方法，来下载并本地存储图片:</p>
-<ul>
-<li>将所有下载的图片转换成通用的格式（JPG）和模式（RGB）</li>
-<li>避免重新下载最近已经下载过的图片</li>
-<li>缩略图生成</li>
-<li>检测图像的宽&#x2F;高，确保它们满足最小限制<br><br><br></li>
-</ul>
-<h2 id="二、项目实战"><a href="#二、项目实战" class="headerlink" title="二、项目实战"></a>二、项目实战</h2><p>这里直接使用自定义的方法，以便于自定义我们图片的名称、下载路径<br><br></p>
-<h3 id="0x01-定义一个Item"><a href="#0x01-定义一个Item" class="headerlink" title="0x01. 定义一个Item"></a>0x01. 定义一个Item</h3><p>在<code>items.py</code>中新建一个<code>class</code></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"></span><br><span class="line"><span class="comment">## 这里我只定义两个属性，标题用于存储图片的父目录，链接截取一部分当图片名称</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ImageItem</span>(scrapy.Item):</span><br><span class="line">    image_urls = scrapy.Field()        <span class="comment"># 图片链接</span></span><br><span class="line">    alt = scrapy.Field()        <span class="comment"># 图片标题</span></span><br></pre></td></tr></table></figure>
-<br>
-
-<h3 id="0x02-配置settings-py"><a href="#0x02-配置settings-py" class="headerlink" title="0x02. 配置settings.py"></a>0x02. 配置<code>settings.py</code></h3><p>在<code>settings.py</code>中修改或添加以下信息</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启用图片管道动能，MyImagesPipeline是我自定义的class，在下面的步骤会进行创建</span></span><br><span class="line">ITEM_PIPELINES = &#123;<span class="string">&#x27;meituba.pipelines.MyImagesPipeline&#x27;</span>: <span class="number">1</span>,&#125;</span><br><span class="line">IMAGES_STORE = <span class="string">&#x27;images&#x27;</span>                <span class="comment"># 存储的根目录</span></span><br></pre></td></tr></table></figure>
-
-<p>如果需要生成缩略图：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 当前默认存储路径为&lt;IMAGES_STORE&gt;/thumbs/big和&lt;IMAGES_STORE&gt;/thumbs/small</span></span><br><span class="line">IMAGES_THUMBS = &#123;</span><br><span class="line">    <span class="string">&#x27;small&#x27;</span>: (<span class="number">50</span>, <span class="number">50</span>),            <span class="comment"># key和value均可自定义</span></span><br><span class="line">    <span class="string">&#x27;big&#x27;</span>: (<span class="number">270</span>, <span class="number">270</span>),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果需要过滤过小的图片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 过滤图片高度小于170、宽度小于260的图片</span></span><br><span class="line">IMAGES_MIN_HEIGHT = <span class="number">170</span></span><br><span class="line">IMAGES_MIN_WIDTH = <span class="number">260</span></span><br></pre></td></tr></table></figure>
-
-<p>如果需要忽略近期已经下载过的图片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 90天的图片失效期限</span></span><br><span class="line">IMAGES_EXPIRES = <span class="number">90</span></span><br></pre></td></tr></table></figure>
-<br>
-
-<h3 id="0x03-自定义图片管道"><a href="#0x03-自定义图片管道" class="headerlink" title="0x03. 自定义图片管道"></a>0x03. 自定义图片管道</h3><p>在<code>pipelines.py</code>中重写<code>file_path()</code>，达到自定义图片存储位置和自定义图片名称的效果</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> scrapy.pipelines.images <span class="keyword">import</span> ImagesPipeline</span><br><span class="line"><span class="keyword">from</span> scrapy.http <span class="keyword">import</span> Request</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyImagesPipeline</span>(<span class="title class_ inherited__">ImagesPipeline</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_media_requests</span>(<span class="params">self, item, info</span>):</span><br><span class="line">        sign = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> image_url <span class="keyword">in</span> item[<span class="string">&#x27;image_urls&#x27;</span>]:</span><br><span class="line">            sign += <span class="number">1</span></span><br><span class="line">            <span class="keyword">yield</span> Request(url=image_url, meta=&#123;<span class="string">&#x27;item&#x27;</span>: item, <span class="string">&#x27;sign&#x27;</span>: sign&#125;)</span><br><span class="line">    <span class="comment"># 重写file_path()，自定义存储文件夹名字和图片名字</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">file_path</span>(<span class="params">self, request, response=<span class="literal">None</span>, info=<span class="literal">None</span></span>):</span><br><span class="line">        item = request.meta[<span class="string">&#x27;item&#x27;</span>]</span><br><span class="line">        sign = request.meta[<span class="string">&#x27;sign&#x27;</span>]-<span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;%s/%s&#x27;</span> % (item[<span class="string">&#x27;alt&#x27;</span>][sign], request.url.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>])</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 重写thumb_path()，自定义缩略图文件名</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">thumb_path</span>(<span class="params">self, request, thumb_id, response=<span class="literal">None</span>, info=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;thumbs/%s/%s&#x27;</span> % (thumb_id, request.url.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<br>
-
-<h3 id="0x04-编写spider"><a href="#0x04-编写spider" class="headerlink" title="0x04. 编写spider"></a>0x04. 编写spider</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> Spider</span><br><span class="line"><span class="keyword">from</span> meituba.items <span class="keyword">import</span> ImageItem</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MeituSpider</span>(<span class="title class_ inherited__">Spider</span>):</span><br><span class="line">    name = <span class="string">&quot;meitu&quot;</span></span><br><span class="line">    <span class="comment"># allowed_domains = [&quot;meituba.com&quot;]</span></span><br><span class="line">    start_urls = [<span class="string">&#x27;http://www.meituba.com/tag/xueshengmei.html&#x27;</span>]</span><br><span class="line">    download_delay = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">parse</span>(<span class="params">self, response</span>):</span><br><span class="line">        item = ImageItem()</span><br><span class="line">        image_urls = response.xpath(<span class="string">&#x27;/html/body/div[4]/div[1]/div[2]/ul/li/div[1]/a/img/@src&#x27;</span>).extract()</span><br><span class="line">        alt = response.xpath(<span class="string">&#x27;/html/body/div[4]/div[1]/div[2]/ul/li/div[1]/a/img/@alt&#x27;</span>).extract()</span><br><span class="line">        item[<span class="string">&#x27;image_urls&#x27;</span>] = image_urls</span><br><span class="line">        item[<span class="string">&#x27;alt&#x27;</span>] = alt</span><br><span class="line">        <span class="keyword">yield</span> item</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="三、效果展示"><a href="#三、效果展示" class="headerlink" title="三、效果展示"></a>三、效果展示</h2><p>运行<code>scrapy crawl meitu</code>， 即可查看效果<br><br><br></p>
-<blockquote>
-<p>ps：凡事先看官网文档：（<a href="https://scrapy-chs.readthedocs.io/zh_CN/latest/topics/images.html">中文文档</a>非官方，英文好的可以看<a href="https://docs.scrapy.org/en/latest">英文官方网站</a>）</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Technique</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Scrapy</tag>
       </tags>
   </entry>
   <entry>
