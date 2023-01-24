@@ -333,107 +333,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Git常用命令</title>
-    <url>/Rules/16f8815d.html</url>
-    <content><![CDATA[<h2 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h2><h3 id="配置用户名和邮箱"><a href="#配置用户名和邮箱" class="headerlink" title="配置用户名和邮箱"></a>配置用户名和邮箱</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git config --global user.name <span class="string">&quot;zhazhahui&quot;</span></span><br><span class="line">$ git config --global user.email <span class="string">&quot;zhazhahui@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>配置好用户名和邮箱后，会在当前用户主目录下建立<code>.gitconfig</code>文件，该配置文件即<code>git</code>全局配置的文件，一般配置方法为：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global &lt;配置名称&gt; &lt;配置的值&gt;</span><br></pre></td></tr></table></figure>
-<p>假如想在某个项目里设置某个值与全局设置有区别，可以把<code>--global</code>去掉，会在当前项目目录下创建<code>.git/config</code>来对当前项目配置单独生效<br><br></p>
-<h3 id="创建SSH密钥"><a href="#创建SSH密钥" class="headerlink" title="创建SSH密钥"></a>创建SSH密钥</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C <span class="string">&quot;zhazhahui@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>创建成功后，用户主目录会生成<code>.ssh</code>，含<code>id_rsa</code>、<code>id_rsa.pub</code>两个文件，即<code>SSH Key</code>的密钥对</p>
-<blockquote>
-<p><code>id_rsa</code>(私钥)不能泄露出去，<code>id_rsa.pub</code>(公钥)可以放心告诉任何人</p>
-</blockquote>
-<br>
-
-<h3 id="公钥贴到Github"><a href="#公钥贴到Github" class="headerlink" title="公钥贴到Github"></a>公钥贴到<a href="https://github.com/" title="点击跳转至GIthub官网..">Github</a></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> /home/&lt;user&gt;/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>Tip：　文件的路径根据自己的实际路径进行更改</p>
-</blockquote>
-<hr>
-<p><br><br></p>
-<h2 id="其他常用命令"><a href="#其他常用命令" class="headerlink" title="其他常用命令"></a>其他常用命令</h2><h3 id="remote"><a href="#remote" class="headerlink" title="remote"></a>remote</h3><h4 id="查看所有的远程主机，使用-v可以查看远程主机的网址"><a href="#查看所有的远程主机，使用-v可以查看远程主机的网址" class="headerlink" title="查看所有的远程主机，使用-v可以查看远程主机的网址"></a>查看所有的远程主机，使用<code>-v</code>可以查看远程主机的网址</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git remote -v</span><br></pre></td></tr></table></figure>
-
-<h4 id="关联远程主机，并设主机名为origin"><a href="#关联远程主机，并设主机名为origin" class="headerlink" title="关联远程主机，并设主机名为origin"></a>关联远程主机，并设主机名为<code>origin</code></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git remote add origin https://github.com/liangzaiming/example.git</span><br></pre></td></tr></table></figure>
-
-<h4 id="删除主机名为origin的远程主机"><a href="#删除主机名为origin的远程主机" class="headerlink" title="删除主机名为origin的远程主机"></a>删除主机名为<code>origin</code>的远程主机</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git remote remove origin</span><br></pre></td></tr></table></figure>
-<br>
-
-
-<h3 id="branch"><a href="#branch" class="headerlink" title="branch"></a>branch</h3><h4 id="查看当前所在分支的情况"><a href="#查看当前所在分支的情况" class="headerlink" title="查看当前所在分支的情况"></a>查看当前所在分支的情况</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git branch</span><br></pre></td></tr></table></figure>
-
-<h4 id="创建分支-a"><a href="#创建分支-a" class="headerlink" title="创建分支 a"></a>创建分支 a</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git branch a</span><br></pre></td></tr></table></figure>
-
-<h4 id="切换到分支-a"><a href="#切换到分支-a" class="headerlink" title="切换到分支 a"></a>切换到分支 a</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout a</span><br></pre></td></tr></table></figure>
-
-<h4 id="创建并切换到分支-a"><a href="#创建并切换到分支-a" class="headerlink" title="创建并切换到分支 a"></a>创建并切换到分支 a</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout -b a</span><br></pre></td></tr></table></figure>
-
-<h4 id="删除分支-a-，若-a-分支的内容没合并到其他分支，则需要使用-D强制删除"><a href="#删除分支-a-，若-a-分支的内容没合并到其他分支，则需要使用-D强制删除" class="headerlink" title="删除分支 a ，若 a 分支的内容没合并到其他分支，则需要使用-D强制删除"></a>删除分支 a ，若 a 分支的内容没合并到其他分支，则需要使用<code>-D</code>强制删除</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git branch -d a</span><br></pre></td></tr></table></figure>
-<br>
-
-
-<h3 id="merge"><a href="#merge" class="headerlink" title="merge"></a>merge</h3><h4 id="合并分支-a-的内容到分支master上（必须把所在分支切换到master上）"><a href="#合并分支-a-的内容到分支master上（必须把所在分支切换到master上）" class="headerlink" title="合并分支 a 的内容到分支master上（必须把所在分支切换到master上）"></a>合并分支 a 的内容到分支<code>master</code>上（必须把所在分支切换到<code>master</code>上）</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git merge a</span><br></pre></td></tr></table></figure>
-<br>
-
-
-<h3 id="clone"><a href="#clone" class="headerlink" title="clone"></a>clone</h3><h4 id="从远程库克隆repository到当前文件夹"><a href="#从远程库克隆repository到当前文件夹" class="headerlink" title="从远程库克隆repository到当前文件夹"></a>从远程库克隆<code>repository</code>到当前文件夹</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/liangzaiming/example.git</span><br></pre></td></tr></table></figure>
-<br>
-
-<h3 id="status"><a href="#status" class="headerlink" title="status"></a>status</h3><h4 id="显示工作树状态"><a href="#显示工作树状态" class="headerlink" title="显示工作树状态"></a>显示工作树状态</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git status</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><br><br></p>
-<h3 id="push"><a href="#push" class="headerlink" title="push"></a>push</h3><h4 id="添加文件并更新推送到远程master分支"><a href="#添加文件并更新推送到远程master分支" class="headerlink" title="添加文件并更新推送到远程master分支"></a>添加文件并更新推送到远程<code>master</code>分支</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git add &lt;fileName&gt;</span><br><span class="line">$ git commit -m <span class="string">&quot;Here write the changes of explain&quot;</span></span><br><span class="line">$ git push origin master</span><br></pre></td></tr></table></figure>
-<br>
-
-<h4 id="删除文件并更新推送到远程master分支"><a href="#删除文件并更新推送到远程master分支" class="headerlink" title="删除文件并更新推送到远程master分支"></a>删除文件并更新推送到远程<code>master</code>分支</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git <span class="built_in">rm</span> &lt;fileName&gt;</span><br><span class="line">$ git commit -m <span class="string">&quot;Here write the changes of explain&quot;</span></span><br><span class="line">$ git push origin master</span><br></pre></td></tr></table></figure>
-<br>
-
-<h4 id="从远程master分支下载更新的内容到本地"><a href="#从远程master分支下载更新的内容到本地" class="headerlink" title="从远程master分支下载更新的内容到本地"></a>从远程<code>master</code>分支下载更新的内容到本地</h4><p>　　多人协作时<code>push</code>先<code>pull</code>，不容易发生冲突</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git pull origin master</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p><br><br></p>
-<blockquote>
-<p>Tips:   By the way, if u want to know even more operations for the git.<br>plese click this net link：<a href="https://pan.baidu.com/s/19FLS9--Gz1EscIUj-grJAQ">learn-github-from-zero.pdf</a>　　password： <del>ppa9</del></p>
-</blockquote>
-<hr>
-<table>
-<thead>
-<tr>
-<th>Event</th>
-<th>Time</th>
-<th>Remark</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>create</td>
-<td>2015.10.22</td>
-<td>创建并记录部分语法</td>
-</tr>
-<tr>
-<td>update</td>
-<td>2016.08.11</td>
-<td>重构文章的内容和排版,并增加部分语法</td>
-</tr>
-<tr>
-<td>update</td>
-<td>2017.04.11</td>
-<td>添加部分常用的语法</td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>Rules</category>
-      </categories>
-      <tags>
-        <tag>Git</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo搭建个人静态博客到GitPages</title>
     <url>/Technique/2d7e24e8.html</url>
     <content><![CDATA[<p>这是 18 年在Archlinux上的安装步骤，现在使用的是Windows10，做少量修改和补充，大致原理还是一样。<span id="more"></span>之前使用的是<a href="https://github.com/iissnan/hexo-theme-next">iissnan&#x2F;hexo-theme-next</a>，现在更换为<a href="https://github.com/theme-next/hexo-theme-next">theme-next&#x2F;hexo-theme-next</a></p>
@@ -549,6 +448,206 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL常用语法</title>
+    <url>/Rules/59fbd90c.html</url>
+    <content><![CDATA[<p>DDL：Data Definition Language	 数据定义语言<br>DML：Data Manipulation Language	数据操纵语言</p>
+<hr>
+<p><br><br></p>
+<h2 id="约束条件"><a href="#约束条件" class="headerlink" title="约束条件"></a>约束条件</h2><table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center"></th>
+<th align="center">表级约束</th>
+<th align="center">列级约束</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">UNIQUE KEY</td>
+<td align="center">唯一</td>
+<td align="center">UNIQUE(name);</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">PRIMARY KEY</td>
+<td align="center">主键</td>
+<td align="center">PRIMARY KEY(name);</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">NOT NULL</td>
+<td align="center">非空</td>
+<td align="center">NOT NULL(name,sex);</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">CHECK</td>
+<td align="center">检查</td>
+<td align="center">CHECK(sex&#x3D;’男’ OR sex&#x3D;’女’);</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">FOREIGN KEY</td>
+<td align="center">外键</td>
+<td align="center">FOREIGN KEY(tb_id) REFERENCES tb_2(id);</td>
+<td align="center">tb_id INT REFERENCES tb_2(id);</td>
+</tr>
+</tbody></table>
+<p><br><br></p>
+<h2 id="联合约束"><a href="#联合约束" class="headerlink" title="联合约束"></a>联合约束</h2><ul>
+<li>联合唯一</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UNIQUE</span>(name, id);            # 以 name 和 id 作为一个整体，再约束其整体为唯一</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>联合主键</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">PRIMARY</span> KEY(name, id);            # 以 name 和 id 作为一个整体，再约束其整体为主键</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="ALTER"><a href="#ALTER" class="headerlink" title="ALTER"></a>ALTER</h2><ul>
+<li>增加主键</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">ADD</span> <span class="keyword">PRIMARY</span> KEY(id);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>增加主键并自定义约束名为 tb_1_pk</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span>S tb_1_pk <span class="keyword">PRIMARY</span> KEY(id);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>增加外键，从表 tb_1 中字段 tb_id 添加 主表 tb_2 中字段 id 为外键</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">ADD</span> <span class="keyword">FOREIGN</span> KEY(tb_id) <span class="keyword">REFERENCES</span> tb_2(id);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除约束名为 tb_1_pk 的约束条件</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">DROP</span> CONSTRAINTS  tb_1_pk;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>禁用约束名为 tb_1_pk 的约束条件</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 DISABLE CONSTRAINTS  tb_1_pk;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>激活约束名为 tb_1_pk 的约束条件</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 ENABLE CONSTRAINTS  tb_1_pk;</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>添加列</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">ADD</span> column_name <span class="type">INT</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除列</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">DROP</span> <span class="keyword">COLUMN</span> column_name;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修改列</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 CHANGE column_old column_new <span class="type">INT</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>重命名表</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 tb_2;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>添加索引</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">ADD</span> INDEX index_name (name,sex);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除索引</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">DROP</span> INDEX index_name;</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="约束相关的数据字典"><a href="#约束相关的数据字典" class="headerlink" title="约束相关的数据字典"></a>约束相关的数据字典</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_constraints <span class="keyword">WHERE</span> table_name <span class="operator">=</span> <span class="string">&#x27;TEST&#x27;</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_cons_columns <span class="keyword">WHERE</span> table_name <span class="operator">=</span> <span class="string">&#x27;TEST&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p>a.　<code>DELETE</code>　　　–DML　配合 <code>where</code> 条件约束删除数据，可以 <code>ROLLBACK</code>   ，保留表结构，速度最慢<br>b.　<code>TRUNCATE</code>　　–DDL　<code>TRUNCATE</code> 是截断表的所有数据(格式化表)，不能 <code>ROLLBACK</code> ，保留表结构，速度较快<br>c.　<code>DROP</code>　　　　–DDL　删除表结构及表的所有数据，不能 <code>ROLLBACK</code> ，不保留表结构，速度最快<br><br><br></p>
+<h2 id="DISTUNCT"><a href="#DISTUNCT" class="headerlink" title="DISTUNCT"></a>DISTUNCT</h2><p>　　-　从返回的结果集中去除重复项</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> DISTUNCT name <span class="keyword">FROM</span> tb_1;            # 去除 name 的重复项再展示查询结果</span><br><span class="line"><span class="keyword">SELECT</span> DISTUNCT name, sex <span class="keyword">FROM</span> tb_1;        # 去除 name 和 sex 作为一个整体的重复项再展示查询结果</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="BETWEEN-AND"><a href="#BETWEEN-AND" class="headerlink" title="BETWEEN .. AND .."></a>BETWEEN .. AND ..</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> num <span class="keyword">BETWEEN</span> <span class="number">800</span> <span class="keyword">AND</span> <span class="number">1600</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> num <span class="operator">&gt;=</span> <span class="number">800</span> <span class="keyword">AND</span> num <span class="operator">&lt;=</span> <span class="number">1600</span>;</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="IN"><a href="#IN" class="headerlink" title="IN"></a>IN</h2><p>　　-　在列出的值中使用</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> num <span class="operator">=</span> <span class="number">30</span> <span class="keyword">OR</span> num <span class="operator">=</span> <span class="number">40</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> num <span class="keyword">IN</span> (<span class="number">30</span>,<span class="number">40</span>);</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="LIKE"><a href="#LIKE" class="headerlink" title="LIKE"></a>LIKE</h2><p>　　-　模糊查询　　<code>%</code> (适配全部字符)　　<code>_</code> (适配单个字符)</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> name <span class="operator">=</span> <span class="string">&#x27;_A%&#x27;</span>;        # 查询 tb_1 表中 name 第二个字符为 A 的所有信息</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="IS-NULL"><a href="#IS-NULL" class="headerlink" title="IS NULL"></a>IS NULL</h2><p>　　-　查询空值</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> NAME <span class="keyword">IS</span> <span class="keyword">NULL</span>;        # 查询 tb_1 表中 name 为空值的所有信息</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> NAME <span class="operator">=</span> <span class="string">&#x27;&#x27;</span>;        # 这种写法是错误的</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">NOT</span> <span class="operator">&gt;</span> <span class="keyword">AND</span> <span class="operator">&gt;</span> <span class="keyword">OR</span></span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="ORDER-BY子句"><a href="#ORDER-BY子句" class="headerlink" title="ORDER BY子句"></a>ORDER BY子句</h2><p>　　-　结果排序　ASC表示升序　DESC表示降序　默认为升序</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">ORDER</span> <span class="keyword">BY</span> num <span class="keyword">DESC</span>;        # 查询 tb_1 表中的所有信息，并按照 num 的降序将结果展示出来</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>　　-　聚合函数都会忽略NULL值</p>
+<ul>
+<li>COUNT( )　　　-　统计行数</li>
+<li>SUM( ) 　　　　-　求和</li>
+<li>AVG( )　 　　 　-　平均值</li>
+<li>MAX( )　　　 　-　最大值</li>
+<li>MIN( )　 　　 　-　最小值<br><br><br></li>
+</ul>
+<h2 id="GROUP-BY-分组"><a href="#GROUP-BY-分组" class="headerlink" title="GROUP BY  分组"></a>GROUP BY  分组</h2><p>　　-　其真正的作用在于与各种组函数结合使用，用来对查询出来的数据进行分组</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> deptno, <span class="built_in">COUNT</span>(<span class="operator">*</span>), <span class="built_in">SUM</span>(num), <span class="built_in">AVG</span>(num), <span class="built_in">MAX</span>(num), MIX(num) <span class="keyword">FROM</span> tb_1 <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptno;        # 分组显示 deptno 中 num 的总数、总和、平均值、最大值和最小值</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="HAVING子句"><a href="#HAVING子句" class="headerlink" title="HAVING子句"></a>HAVING子句</h2><p>　　-　WHERE 搜索条件在进行分组操作之前应用；而 HAVING 搜索条件在进行分组操作之后应用。<br>　　-　HAVING 语法与 WHERE 语法类似，但 HAVING 可以包含聚合函数。<br>　　-　HAVING 子句可以引用选择列表中显示的任意项。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> deptno,<span class="built_in">COUNT</span>(<span class="operator">*</span>),<span class="built_in">SUM</span>(sal),<span class="built_in">AVG</span>(sal),<span class="built_in">MAX</span>(sal),<span class="built_in">MIN</span>(sal) <span class="keyword">FROM</span> scott.emp <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptno <span class="keyword">HAVING</span> <span class="built_in">SUM</span>(sal) <span class="operator">&gt;</span> <span class="number">9000</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="built_in">SUM</span>(sal) <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="ROWNUM"><a href="#ROWNUM" class="headerlink" title="ROWNUM"></a>ROWNUM</h2><p>　　-　虚假的列(伪列)，因为 <code>ROWNUM</code> 都是从1开始,但是1以上的自然数在 <code>ROWNUM</code> 做等于判断是时认为都是 <code>false</code> 条件，即必须有前一个才会有后一个。<br><br><br></p>
+<h2 id="INDEX-索引"><a href="#INDEX-索引" class="headerlink" title="INDEX　索引"></a>INDEX　索引</h2><p>　　-　在数据库中用来加速对表的查询，通过使用快速路径访问方法快速定位数据，减少了磁盘的 <code>I/O</code></p>
+<ul>
+<li>特点<ul>
+<li>与表独立存放，但不能独立存在，必须属于某个表</li>
+<li>由数据库自动维护，表被删除时，该表上的索引自动被删除。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX index_name <span class="keyword">ON</span> tb_1(name);        # 给表 tb_1 中的字段 name 创建一个索引名为 index_name 的索引</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="SEQUENCE-序列"><a href="#SEQUENCE-序列" class="headerlink" title="SEQUENCE　序列"></a>SEQUENCE　序列</h2><blockquote>
+<p>eg：</p>
+</blockquote>
+<blockquote>
+<p>CREATE SEQUENCESE seq_name<br>minvalue 1　　　　 　　　 　 　　最小值：1<br>maxvalue 999　　　　　　　 　　最大值：999<br>start with 1　　　　 　　　 　　　开始值：1<br>increment by 5　　 　 　 　　 　   自增值：5<br>cache 20;　　　 　　 　  　　  　   缓存值:20，超过20会自动创建一个20个值的缓存，不需要时 noache</p>
+</blockquote>
+<ul>
+<li>序列的两个重要属性：<code>currval</code> 当前值，<code>nextval</code> 当前值增加一次后的值<ul>
+<li>seq_name.currval　　　　　　1</li>
+<li>seq_name.nextval　　　　　　6<br><br><br></li>
+</ul>
+</li>
+</ul>
+<h2 id="VIEW-视图"><a href="#VIEW-视图" class="headerlink" title="VIEW　视图"></a>VIEW　视图</h2><p>　　-　因为部分已执行过，所以部分不需要再编译，使用的时候比普通的语句快，简化sql语句</p>
+<ul>
+<li>创建：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> v_indo <span class="keyword">AS</span> <span class="keyword">SELECT</span> deptno <span class="keyword">AS</span> 部门, <span class="built_in">count</span>(<span class="operator">*</span>) 人数, <span class="built_in">SUM</span>(sal) 总工资, <span class="built_in">AVG</span>(sal) 平均工资 <span class="keyword">FROM</span> tb_1 <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptno;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> v_info;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">VIEW</span> v_info;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Rules</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
       </tags>
   </entry>
   <entry>
@@ -761,206 +860,6 @@
       </tags>
   </entry>
   <entry>
-    <title>MySQL常用语法</title>
-    <url>/Rules/59fbd90c.html</url>
-    <content><![CDATA[<p>DDL：Data Definition Language	 数据定义语言<br>DML：Data Manipulation Language	数据操纵语言</p>
-<hr>
-<p><br><br></p>
-<h2 id="约束条件"><a href="#约束条件" class="headerlink" title="约束条件"></a>约束条件</h2><table>
-<thead>
-<tr>
-<th align="center"></th>
-<th align="center"></th>
-<th align="center">表级约束</th>
-<th align="center">列级约束</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">UNIQUE KEY</td>
-<td align="center">唯一</td>
-<td align="center">UNIQUE(name);</td>
-<td align="center"></td>
-</tr>
-<tr>
-<td align="center">PRIMARY KEY</td>
-<td align="center">主键</td>
-<td align="center">PRIMARY KEY(name);</td>
-<td align="center"></td>
-</tr>
-<tr>
-<td align="center">NOT NULL</td>
-<td align="center">非空</td>
-<td align="center">NOT NULL(name,sex);</td>
-<td align="center"></td>
-</tr>
-<tr>
-<td align="center">CHECK</td>
-<td align="center">检查</td>
-<td align="center">CHECK(sex&#x3D;’男’ OR sex&#x3D;’女’);</td>
-<td align="center"></td>
-</tr>
-<tr>
-<td align="center">FOREIGN KEY</td>
-<td align="center">外键</td>
-<td align="center">FOREIGN KEY(tb_id) REFERENCES tb_2(id);</td>
-<td align="center">tb_id INT REFERENCES tb_2(id);</td>
-</tr>
-</tbody></table>
-<p><br><br></p>
-<h2 id="联合约束"><a href="#联合约束" class="headerlink" title="联合约束"></a>联合约束</h2><ul>
-<li>联合唯一</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UNIQUE</span>(name, id);            # 以 name 和 id 作为一个整体，再约束其整体为唯一</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>联合主键</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">PRIMARY</span> KEY(name, id);            # 以 name 和 id 作为一个整体，再约束其整体为主键</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="ALTER"><a href="#ALTER" class="headerlink" title="ALTER"></a>ALTER</h2><ul>
-<li>增加主键</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">ADD</span> <span class="keyword">PRIMARY</span> KEY(id);</span><br></pre></td></tr></table></figure>
-<ul>
-<li>增加主键并自定义约束名为 tb_1_pk</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span>S tb_1_pk <span class="keyword">PRIMARY</span> KEY(id);</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>增加外键，从表 tb_1 中字段 tb_id 添加 主表 tb_2 中字段 id 为外键</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">ADD</span> <span class="keyword">FOREIGN</span> KEY(tb_id) <span class="keyword">REFERENCES</span> tb_2(id);</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>删除约束名为 tb_1_pk 的约束条件</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">DROP</span> CONSTRAINTS  tb_1_pk;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>禁用约束名为 tb_1_pk 的约束条件</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 DISABLE CONSTRAINTS  tb_1_pk;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>激活约束名为 tb_1_pk 的约束条件</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 ENABLE CONSTRAINTS  tb_1_pk;</span><br></pre></td></tr></table></figure>
-
-
-<ul>
-<li>添加列</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">ADD</span> column_name <span class="type">INT</span>;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>删除列</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">DROP</span> <span class="keyword">COLUMN</span> column_name;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>修改列</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 CHANGE column_old column_new <span class="type">INT</span>;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>重命名表</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 tb_2;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>添加索引</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">ADD</span> INDEX index_name (name,sex);</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>删除索引</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> tb_1 <span class="keyword">DROP</span> INDEX index_name;</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="约束相关的数据字典"><a href="#约束相关的数据字典" class="headerlink" title="约束相关的数据字典"></a>约束相关的数据字典</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_constraints <span class="keyword">WHERE</span> table_name <span class="operator">=</span> <span class="string">&#x27;TEST&#x27;</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_cons_columns <span class="keyword">WHERE</span> table_name <span class="operator">=</span> <span class="string">&#x27;TEST&#x27;</span>;</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p>a.　<code>DELETE</code>　　　–DML　配合 <code>where</code> 条件约束删除数据，可以 <code>ROLLBACK</code>   ，保留表结构，速度最慢<br>b.　<code>TRUNCATE</code>　　–DDL　<code>TRUNCATE</code> 是截断表的所有数据(格式化表)，不能 <code>ROLLBACK</code> ，保留表结构，速度较快<br>c.　<code>DROP</code>　　　　–DDL　删除表结构及表的所有数据，不能 <code>ROLLBACK</code> ，不保留表结构，速度最快<br><br><br></p>
-<h2 id="DISTUNCT"><a href="#DISTUNCT" class="headerlink" title="DISTUNCT"></a>DISTUNCT</h2><p>　　-　从返回的结果集中去除重复项</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> DISTUNCT name <span class="keyword">FROM</span> tb_1;            # 去除 name 的重复项再展示查询结果</span><br><span class="line"><span class="keyword">SELECT</span> DISTUNCT name, sex <span class="keyword">FROM</span> tb_1;        # 去除 name 和 sex 作为一个整体的重复项再展示查询结果</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="BETWEEN-AND"><a href="#BETWEEN-AND" class="headerlink" title="BETWEEN .. AND .."></a>BETWEEN .. AND ..</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> num <span class="keyword">BETWEEN</span> <span class="number">800</span> <span class="keyword">AND</span> <span class="number">1600</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> num <span class="operator">&gt;=</span> <span class="number">800</span> <span class="keyword">AND</span> num <span class="operator">&lt;=</span> <span class="number">1600</span>;</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="IN"><a href="#IN" class="headerlink" title="IN"></a>IN</h2><p>　　-　在列出的值中使用</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> num <span class="operator">=</span> <span class="number">30</span> <span class="keyword">OR</span> num <span class="operator">=</span> <span class="number">40</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> num <span class="keyword">IN</span> (<span class="number">30</span>,<span class="number">40</span>);</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="LIKE"><a href="#LIKE" class="headerlink" title="LIKE"></a>LIKE</h2><p>　　-　模糊查询　　<code>%</code> (适配全部字符)　　<code>_</code> (适配单个字符)</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> name <span class="operator">=</span> <span class="string">&#x27;_A%&#x27;</span>;        # 查询 tb_1 表中 name 第二个字符为 A 的所有信息</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="IS-NULL"><a href="#IS-NULL" class="headerlink" title="IS NULL"></a>IS NULL</h2><p>　　-　查询空值</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> NAME <span class="keyword">IS</span> <span class="keyword">NULL</span>;        # 查询 tb_1 表中 name 为空值的所有信息</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">WHERE</span> NAME <span class="operator">=</span> <span class="string">&#x27;&#x27;</span>;        # 这种写法是错误的</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">NOT</span> <span class="operator">&gt;</span> <span class="keyword">AND</span> <span class="operator">&gt;</span> <span class="keyword">OR</span></span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="ORDER-BY子句"><a href="#ORDER-BY子句" class="headerlink" title="ORDER BY子句"></a>ORDER BY子句</h2><p>　　-　结果排序　ASC表示升序　DESC表示降序　默认为升序</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_1 <span class="keyword">ORDER</span> <span class="keyword">BY</span> num <span class="keyword">DESC</span>;        # 查询 tb_1 表中的所有信息，并按照 num 的降序将结果展示出来</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>　　-　聚合函数都会忽略NULL值</p>
-<ul>
-<li>COUNT( )　　　-　统计行数</li>
-<li>SUM( ) 　　　　-　求和</li>
-<li>AVG( )　 　　 　-　平均值</li>
-<li>MAX( )　　　 　-　最大值</li>
-<li>MIN( )　 　　 　-　最小值<br><br><br></li>
-</ul>
-<h2 id="GROUP-BY-分组"><a href="#GROUP-BY-分组" class="headerlink" title="GROUP BY  分组"></a>GROUP BY  分组</h2><p>　　-　其真正的作用在于与各种组函数结合使用，用来对查询出来的数据进行分组</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> deptno, <span class="built_in">COUNT</span>(<span class="operator">*</span>), <span class="built_in">SUM</span>(num), <span class="built_in">AVG</span>(num), <span class="built_in">MAX</span>(num), MIX(num) <span class="keyword">FROM</span> tb_1 <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptno;        # 分组显示 deptno 中 num 的总数、总和、平均值、最大值和最小值</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="HAVING子句"><a href="#HAVING子句" class="headerlink" title="HAVING子句"></a>HAVING子句</h2><p>　　-　WHERE 搜索条件在进行分组操作之前应用；而 HAVING 搜索条件在进行分组操作之后应用。<br>　　-　HAVING 语法与 WHERE 语法类似，但 HAVING 可以包含聚合函数。<br>　　-　HAVING 子句可以引用选择列表中显示的任意项。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> deptno,<span class="built_in">COUNT</span>(<span class="operator">*</span>),<span class="built_in">SUM</span>(sal),<span class="built_in">AVG</span>(sal),<span class="built_in">MAX</span>(sal),<span class="built_in">MIN</span>(sal) <span class="keyword">FROM</span> scott.emp <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptno <span class="keyword">HAVING</span> <span class="built_in">SUM</span>(sal) <span class="operator">&gt;</span> <span class="number">9000</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="built_in">SUM</span>(sal) <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="ROWNUM"><a href="#ROWNUM" class="headerlink" title="ROWNUM"></a>ROWNUM</h2><p>　　-　虚假的列(伪列)，因为 <code>ROWNUM</code> 都是从1开始,但是1以上的自然数在 <code>ROWNUM</code> 做等于判断是时认为都是 <code>false</code> 条件，即必须有前一个才会有后一个。<br><br><br></p>
-<h2 id="INDEX-索引"><a href="#INDEX-索引" class="headerlink" title="INDEX　索引"></a>INDEX　索引</h2><p>　　-　在数据库中用来加速对表的查询，通过使用快速路径访问方法快速定位数据，减少了磁盘的 <code>I/O</code></p>
-<ul>
-<li>特点<ul>
-<li>与表独立存放，但不能独立存在，必须属于某个表</li>
-<li>由数据库自动维护，表被删除时，该表上的索引自动被删除。</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX index_name <span class="keyword">ON</span> tb_1(name);        # 给表 tb_1 中的字段 name 创建一个索引名为 index_name 的索引</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="SEQUENCE-序列"><a href="#SEQUENCE-序列" class="headerlink" title="SEQUENCE　序列"></a>SEQUENCE　序列</h2><blockquote>
-<p>eg：</p>
-</blockquote>
-<blockquote>
-<p>CREATE SEQUENCESE seq_name<br>minvalue 1　　　　 　　　 　 　　最小值：1<br>maxvalue 999　　　　　　　 　　最大值：999<br>start with 1　　　　 　　　 　　　开始值：1<br>increment by 5　　 　 　 　　 　   自增值：5<br>cache 20;　　　 　　 　  　　  　   缓存值:20，超过20会自动创建一个20个值的缓存，不需要时 noache</p>
-</blockquote>
-<ul>
-<li>序列的两个重要属性：<code>currval</code> 当前值，<code>nextval</code> 当前值增加一次后的值<ul>
-<li>seq_name.currval　　　　　　1</li>
-<li>seq_name.nextval　　　　　　6<br><br><br></li>
-</ul>
-</li>
-</ul>
-<h2 id="VIEW-视图"><a href="#VIEW-视图" class="headerlink" title="VIEW　视图"></a>VIEW　视图</h2><p>　　-　因为部分已执行过，所以部分不需要再编译，使用的时候比普通的语句快，简化sql语句</p>
-<ul>
-<li>创建：</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> v_indo <span class="keyword">AS</span> <span class="keyword">SELECT</span> deptno <span class="keyword">AS</span> 部门, <span class="built_in">count</span>(<span class="operator">*</span>) 人数, <span class="built_in">SUM</span>(sal) 总工资, <span class="built_in">AVG</span>(sal) 平均工资 <span class="keyword">FROM</span> tb_1 <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptno;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>使用：</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> v_info;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>删除：</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">VIEW</span> v_info;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Rules</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>「Scrapy」爬虫过程中避免被禁的几个小方法</title>
     <url>/Technique/8cd17fc.html</url>
     <content><![CDATA[<h3 id="0x01-动态设置-UserAgent"><a href="#0x01-动态设置-UserAgent" class="headerlink" title="0x01. 动态设置 UserAgent"></a>0x01. 动态设置 UserAgent</h3><blockquote>
@@ -1149,58 +1048,6 @@
       <tags>
         <tag>Python</tag>
         <tag>Script</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>正则表达式</title>
-    <url>/Rules/2f57a694.html</url>
-    <content><![CDATA[<h3 id="1-界定符"><a href="#1-界定符" class="headerlink" title="1. 界定符"></a>1. 界定符</h3><ul>
-<li>界定符<br>  表示一个正则表达式的开始和结束　<code>//</code>　<code>##</code>　<code>&#123;&#125;</code><br>  但<code>&#123;&#125;</code>也可用作正则表达式的运算符，为避免产生歧义，通常不用<code>&#123;&#125;</code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/[0-9]/&#x27;</span>;</span><br></pre></td></tr></table></figure>
-<br><br></li>
-</ul>
-<h3 id="2-原子概念"><a href="#2-原子概念" class="headerlink" title="2. 原子概念"></a>2. 原子概念</h3><ul>
-<li><p>可见原子<br>  <code>Unicode</code>编码表中用键盘输出后肉眼可见的字符</p>
-</li>
-<li><p>不可见原子<br>  <code>Unicode</code>编码表中用键盘输出后肉眼不可见的字符，例如空格等<br>  <br><br></p>
-</li>
-</ul>
-<h3 id="3-元字符"><a href="#3-元字符" class="headerlink" title="3. 元字符"></a>3. 元字符</h3><ul>
-<li><p>原子的筛选方式<br>  - 　 <code>|</code> 　 　 　匹配两个或多个分支选择<br>  -　 <code>[]</code> 　　 　匹配方括号中的任意一个原子<br>  -　<code>[^]</code>　　　匹配除方括号中的原子之外的任意字符，<code>^</code>必须跟在左方括号后面</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">[Dd]uang~  等同于  Duang~|duang~</span><br><span class="line">[a-zA-Z] 与 [a-z A-Z] 所匹配到的字符不一样,后者多匹配一个空格符</span><br></pre></td></tr></table></figure>
-<br>
-
-</li>
-<li><p>原子的集合<br>- 　 <code>.</code>　　　　匹配除换行符之外的任意字符，注：<code>.</code>不是专一匹配符号<br>-　<code>\d</code>　　　　匹配任意一个十进制数字，即<code>[0-9]</code><br>-　<code>\D</code>　　　　匹配任意一个非十进制数字，即<code>[^0-9]</code><br>-　<code>\s</code>　　　　匹配一个不可见原子，即<code>[\f\n\r\t\v]</code><br>-　<code>\S</code>　　　　匹配一个可见原子，即<code>[^\f\n\r\t\v]</code><br>-　<code>\w</code>　　　　匹配任意一个数字、字母或下划线，即<code>[0-9a-zA-Z_]</code><br>-　<code>\W</code>　　　　匹配任意一个非数字、字母或下划线，即<code>[^0-9a-zA-Z_]</code><br><br><br></p>
-</li>
-</ul>
-<h3 id="4-量词"><a href="#4-量词" class="headerlink" title="4. 量词"></a>4. 量词</h3><ul>
-<li>量词<br>  -　<code>&#123;n&#125;</code>　　　　　表示其前面的原子恰好出现<code>n</code>次<br>  -　<code>&#123;n,&#125;</code>　　 　 　表示其前面的原子最少出现<code>n</code>次<br>  -　<code>&#123;n,m&#125;</code>　　　　表示其前面的原子最少出现<code>n</code>次，最多出现<code>m</code>次<br>  -　<code>*</code>　　　　　　匹配0次、1次或多次其之前的院子，即<code>&#123;0,&#125;</code><br>  -　<code>+</code>　　　　　　匹配1次或多次其之前的原子，即<code>&#123;1,&#125;</code><br>  -　<code>?</code>　　　　　　匹配0次或1次其之前的原子，即<code>&#123;0,1&#125;</code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">[a-z]&#123;<span class="number">4</span>,<span class="number">5</span>&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<hr>
-<p><br><br></p>
-<h3 id="5-其他"><a href="#5-其他" class="headerlink" title="5. 其他"></a>5. 其他</h3><ul>
-<li><p>边界控制&#x2F;定位符<br>　　-　<code>^</code>　　　　匹配字符串开始的位置<br>　　-　<code>$</code>　　　　匹配字符串结束的位置<br>　　-　<code>()</code>　 　 　匹配其中的整体为一个原子</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">　　^Duang$　　　　强制必须以D开头，前面不能有其它内容，必须以g结尾</span><br><span class="line">　　(Duang)　　　　匹配一个整体Duang，当作一个原子对待</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>修正模式&#x2F;修饰符<br>　　贪婪匹配<br>　　　　　　　　　-　匹配结果存在歧义是取其长</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/China.+123/&#x27;</span>;</span><br><span class="line">$subject = <span class="string">&#x27;I love China_123123123123&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta"># result:    China_123123123123</span></span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>懒惰匹配<br>　　　-　匹配结果存在歧义是取其短</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/China.+123/U&#x27;</span>;</span><br><span class="line">$subject = <span class="string">&#x27;I love China_123123123123&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta"># result:    China_123</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>*！　默认模式为贪婪匹配，若改为懒惰匹配只需要在界定符的后面加<code>U</code></p>
-<p>　　常见的修正模式<br>　　-　<code>U</code>　懒惰匹配<br>　　-　<code>i</code>　忽略英文大小写<br>　　-　<code>x</code>　忽略空白<br>　　-　<code>s</code>　让元字符<code>.</code>匹配包括换行符在内的所有字符</p>
-<p>　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　—— This is all.   2016.05.06</p>
-]]></content>
-      <categories>
-        <category>Rules</category>
-      </categories>
-      <tags>
-        <tag>Regex</tag>
       </tags>
   </entry>
   <entry>
@@ -1583,6 +1430,159 @@
       </categories>
       <tags>
         <tag>Oracle</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git常用命令</title>
+    <url>/Rules/16f8815d.html</url>
+    <content><![CDATA[<h2 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h2><h3 id="配置用户名和邮箱"><a href="#配置用户名和邮箱" class="headerlink" title="配置用户名和邮箱"></a>配置用户名和邮箱</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git config --global user.name <span class="string">&quot;zhazhahui&quot;</span></span><br><span class="line">$ git config --global user.email <span class="string">&quot;zhazhahui@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置好用户名和邮箱后，会在当前用户主目录下建立<code>.gitconfig</code>文件，该配置文件即<code>git</code>全局配置的文件，一般配置方法为：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global &lt;配置名称&gt; &lt;配置的值&gt;</span><br></pre></td></tr></table></figure>
+<p>假如想在某个项目里设置某个值与全局设置有区别，可以把<code>--global</code>去掉，会在当前项目目录下创建<code>.git/config</code>来对当前项目配置单独生效<br><br></p>
+<h3 id="创建SSH密钥"><a href="#创建SSH密钥" class="headerlink" title="创建SSH密钥"></a>创建SSH密钥</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C <span class="string">&quot;zhazhahui@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>创建成功后，用户主目录会生成<code>.ssh</code>，含<code>id_rsa</code>、<code>id_rsa.pub</code>两个文件，即<code>SSH Key</code>的密钥对</p>
+<blockquote>
+<p><code>id_rsa</code>(私钥)不能泄露出去，<code>id_rsa.pub</code>(公钥)可以放心告诉任何人</p>
+</blockquote>
+<br>
+
+<h3 id="公钥贴到Github"><a href="#公钥贴到Github" class="headerlink" title="公钥贴到Github"></a>公钥贴到<a href="https://github.com/" title="点击跳转至GIthub官网..">Github</a></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> /home/&lt;user&gt;/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Tip：　文件的路径根据自己的实际路径进行更改</p>
+</blockquote>
+<hr>
+<p><br><br></p>
+<h2 id="其他常用命令"><a href="#其他常用命令" class="headerlink" title="其他常用命令"></a>其他常用命令</h2><h3 id="remote"><a href="#remote" class="headerlink" title="remote"></a>remote</h3><h4 id="查看所有的远程主机，使用-v可以查看远程主机的网址"><a href="#查看所有的远程主机，使用-v可以查看远程主机的网址" class="headerlink" title="查看所有的远程主机，使用-v可以查看远程主机的网址"></a>查看所有的远程主机，使用<code>-v</code>可以查看远程主机的网址</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git remote -v</span><br></pre></td></tr></table></figure>
+
+<h4 id="关联远程主机，并设主机名为origin"><a href="#关联远程主机，并设主机名为origin" class="headerlink" title="关联远程主机，并设主机名为origin"></a>关联远程主机，并设主机名为<code>origin</code></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git remote add origin https://github.com/liangzaiming/example.git</span><br></pre></td></tr></table></figure>
+
+<h4 id="删除主机名为origin的远程主机"><a href="#删除主机名为origin的远程主机" class="headerlink" title="删除主机名为origin的远程主机"></a>删除主机名为<code>origin</code>的远程主机</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git remote remove origin</span><br></pre></td></tr></table></figure>
+<br>
+
+
+<h3 id="branch"><a href="#branch" class="headerlink" title="branch"></a>branch</h3><h4 id="查看当前所在分支的情况"><a href="#查看当前所在分支的情况" class="headerlink" title="查看当前所在分支的情况"></a>查看当前所在分支的情况</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git branch</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建分支-a"><a href="#创建分支-a" class="headerlink" title="创建分支 a"></a>创建分支 a</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git branch a</span><br></pre></td></tr></table></figure>
+
+<h4 id="切换到分支-a"><a href="#切换到分支-a" class="headerlink" title="切换到分支 a"></a>切换到分支 a</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout a</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建并切换到分支-a"><a href="#创建并切换到分支-a" class="headerlink" title="创建并切换到分支 a"></a>创建并切换到分支 a</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git checkout -b a</span><br></pre></td></tr></table></figure>
+
+<h4 id="删除分支-a-，若-a-分支的内容没合并到其他分支，则需要使用-D强制删除"><a href="#删除分支-a-，若-a-分支的内容没合并到其他分支，则需要使用-D强制删除" class="headerlink" title="删除分支 a ，若 a 分支的内容没合并到其他分支，则需要使用-D强制删除"></a>删除分支 a ，若 a 分支的内容没合并到其他分支，则需要使用<code>-D</code>强制删除</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git branch -d a</span><br></pre></td></tr></table></figure>
+<br>
+
+
+<h3 id="merge"><a href="#merge" class="headerlink" title="merge"></a>merge</h3><h4 id="合并分支-a-的内容到分支master上（必须把所在分支切换到master上）"><a href="#合并分支-a-的内容到分支master上（必须把所在分支切换到master上）" class="headerlink" title="合并分支 a 的内容到分支master上（必须把所在分支切换到master上）"></a>合并分支 a 的内容到分支<code>master</code>上（必须把所在分支切换到<code>master</code>上）</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git merge a</span><br></pre></td></tr></table></figure>
+<br>
+
+
+<h3 id="clone"><a href="#clone" class="headerlink" title="clone"></a>clone</h3><h4 id="从远程库克隆repository到当前文件夹"><a href="#从远程库克隆repository到当前文件夹" class="headerlink" title="从远程库克隆repository到当前文件夹"></a>从远程库克隆<code>repository</code>到当前文件夹</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/liangzaiming/example.git</span><br></pre></td></tr></table></figure>
+<br>
+
+<h3 id="status"><a href="#status" class="headerlink" title="status"></a>status</h3><h4 id="显示工作树状态"><a href="#显示工作树状态" class="headerlink" title="显示工作树状态"></a>显示工作树状态</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git status</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><br><br></p>
+<h3 id="push"><a href="#push" class="headerlink" title="push"></a>push</h3><h4 id="添加文件并更新推送到远程master分支"><a href="#添加文件并更新推送到远程master分支" class="headerlink" title="添加文件并更新推送到远程master分支"></a>添加文件并更新推送到远程<code>master</code>分支</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git add &lt;fileName&gt;</span><br><span class="line">$ git commit -m <span class="string">&quot;Here write the changes of explain&quot;</span></span><br><span class="line">$ git push origin master</span><br></pre></td></tr></table></figure>
+<br>
+
+<h4 id="删除文件并更新推送到远程master分支"><a href="#删除文件并更新推送到远程master分支" class="headerlink" title="删除文件并更新推送到远程master分支"></a>删除文件并更新推送到远程<code>master</code>分支</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git <span class="built_in">rm</span> &lt;fileName&gt;</span><br><span class="line">$ git commit -m <span class="string">&quot;Here write the changes of explain&quot;</span></span><br><span class="line">$ git push origin master</span><br></pre></td></tr></table></figure>
+<br>
+
+<h4 id="从远程master分支下载更新的内容到本地"><a href="#从远程master分支下载更新的内容到本地" class="headerlink" title="从远程master分支下载更新的内容到本地"></a>从远程<code>master</code>分支下载更新的内容到本地</h4><p>　　多人协作时<code>push</code>先<code>pull</code>，不容易发生冲突</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git pull origin master</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><br><br></p>
+<blockquote>
+<p>Tips:   By the way, if u want to know even more operations for the git.<br>plese click this net link：<a href="https://pan.baidu.com/s/19FLS9--Gz1EscIUj-grJAQ">learn-github-from-zero.pdf</a>　　password： <del>ppa9</del></p>
+</blockquote>
+<hr>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Time</th>
+<th>Remark</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>create</td>
+<td>2015.10.22</td>
+<td>创建并记录部分语法</td>
+</tr>
+<tr>
+<td>update</td>
+<td>2016.08.11</td>
+<td>重构文章的内容和排版,并增加部分语法</td>
+</tr>
+<tr>
+<td>update</td>
+<td>2017.04.11</td>
+<td>添加部分常用的语法</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>Rules</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>正则表达式</title>
+    <url>/Rules/2f57a694.html</url>
+    <content><![CDATA[<h3 id="1-界定符"><a href="#1-界定符" class="headerlink" title="1. 界定符"></a>1. 界定符</h3><ul>
+<li>界定符<br>  表示一个正则表达式的开始和结束　<code>//</code>　<code>##</code>　<code>&#123;&#125;</code><br>  但<code>&#123;&#125;</code>也可用作正则表达式的运算符，为避免产生歧义，通常不用<code>&#123;&#125;</code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/[0-9]/&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<br><br></li>
+</ul>
+<h3 id="2-原子概念"><a href="#2-原子概念" class="headerlink" title="2. 原子概念"></a>2. 原子概念</h3><ul>
+<li><p>可见原子<br>  <code>Unicode</code>编码表中用键盘输出后肉眼可见的字符</p>
+</li>
+<li><p>不可见原子<br>  <code>Unicode</code>编码表中用键盘输出后肉眼不可见的字符，例如空格等<br>  <br><br></p>
+</li>
+</ul>
+<h3 id="3-元字符"><a href="#3-元字符" class="headerlink" title="3. 元字符"></a>3. 元字符</h3><ul>
+<li><p>原子的筛选方式<br>  - 　 <code>|</code> 　 　 　匹配两个或多个分支选择<br>  -　 <code>[]</code> 　　 　匹配方括号中的任意一个原子<br>  -　<code>[^]</code>　　　匹配除方括号中的原子之外的任意字符，<code>^</code>必须跟在左方括号后面</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">[Dd]uang~  等同于  Duang~|duang~</span><br><span class="line">[a-zA-Z] 与 [a-z A-Z] 所匹配到的字符不一样,后者多匹配一个空格符</span><br></pre></td></tr></table></figure>
+<br>
+
+</li>
+<li><p>原子的集合<br>- 　 <code>.</code>　　　　匹配除换行符之外的任意字符，注：<code>.</code>不是专一匹配符号<br>-　<code>\d</code>　　　　匹配任意一个十进制数字，即<code>[0-9]</code><br>-　<code>\D</code>　　　　匹配任意一个非十进制数字，即<code>[^0-9]</code><br>-　<code>\s</code>　　　　匹配一个不可见原子，即<code>[\f\n\r\t\v]</code><br>-　<code>\S</code>　　　　匹配一个可见原子，即<code>[^\f\n\r\t\v]</code><br>-　<code>\w</code>　　　　匹配任意一个数字、字母或下划线，即<code>[0-9a-zA-Z_]</code><br>-　<code>\W</code>　　　　匹配任意一个非数字、字母或下划线，即<code>[^0-9a-zA-Z_]</code><br><br><br></p>
+</li>
+</ul>
+<h3 id="4-量词"><a href="#4-量词" class="headerlink" title="4. 量词"></a>4. 量词</h3><ul>
+<li>量词<br>  -　<code>&#123;n&#125;</code>　　　　　表示其前面的原子恰好出现<code>n</code>次<br>  -　<code>&#123;n,&#125;</code>　　 　 　表示其前面的原子最少出现<code>n</code>次<br>  -　<code>&#123;n,m&#125;</code>　　　　表示其前面的原子最少出现<code>n</code>次，最多出现<code>m</code>次<br>  -　<code>*</code>　　　　　　匹配0次、1次或多次其之前的院子，即<code>&#123;0,&#125;</code><br>  -　<code>+</code>　　　　　　匹配1次或多次其之前的原子，即<code>&#123;1,&#125;</code><br>  -　<code>?</code>　　　　　　匹配0次或1次其之前的原子，即<code>&#123;0,1&#125;</code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">[a-z]&#123;<span class="number">4</span>,<span class="number">5</span>&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<p><br><br></p>
+<h3 id="5-其他"><a href="#5-其他" class="headerlink" title="5. 其他"></a>5. 其他</h3><ul>
+<li><p>边界控制&#x2F;定位符<br>　　-　<code>^</code>　　　　匹配字符串开始的位置<br>　　-　<code>$</code>　　　　匹配字符串结束的位置<br>　　-　<code>()</code>　 　 　匹配其中的整体为一个原子</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">　　^Duang$　　　　强制必须以D开头，前面不能有其它内容，必须以g结尾</span><br><span class="line">　　(Duang)　　　　匹配一个整体Duang，当作一个原子对待</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>修正模式&#x2F;修饰符<br>　　贪婪匹配<br>　　　　　　　　　-　匹配结果存在歧义是取其长</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/China.+123/&#x27;</span>;</span><br><span class="line">$subject = <span class="string">&#x27;I love China_123123123123&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta"># result:    China_123123123123</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>懒惰匹配<br>　　　-　匹配结果存在歧义是取其短</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$pattern = <span class="string">&#x27;/China.+123/U&#x27;</span>;</span><br><span class="line">$subject = <span class="string">&#x27;I love China_123123123123&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta"># result:    China_123</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>*！　默认模式为贪婪匹配，若改为懒惰匹配只需要在界定符的后面加<code>U</code></p>
+<p>　　常见的修正模式<br>　　-　<code>U</code>　懒惰匹配<br>　　-　<code>i</code>　忽略英文大小写<br>　　-　<code>x</code>　忽略空白<br>　　-　<code>s</code>　让元字符<code>.</code>匹配包括换行符在内的所有字符</p>
+<p>　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　—— This is all.   2016.05.06</p>
+]]></content>
+      <categories>
+        <category>Rules</category>
+      </categories>
+      <tags>
+        <tag>Regex</tag>
       </tags>
   </entry>
 </search>
