@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  
+<script>
+    (function(){
+        if(''){
+            if (prompt('PLEASE ENTER PASSWORD: ') !== ''){
+                alert('SORRY，YOU ARE DENIED ACCESS ！');
+                if(history.length==1)
+                    location.replace("https://cdd233.github.io/");
+                else
+                    history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YJcewMuFmFLA57LSMGBF5hYsijcaN0SsLs_vewKECf4">
+  <meta name="baidu-site-verification" content="code-Vpre2obNu5">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cdd233.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.14.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js"></script>
+
+    <meta property="og:type" content="article">
+<meta property="og:title" content="Git常用命令">
+<meta property="og:url" content="https://cdd233.github.io/Rules/16f8815d.html">
+<meta property="og:site_name" content="cdd233">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-10-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-09-19T18:52:20.000Z">
+<meta property="article:author" content="Tromixfuc">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://cdd233.github.io/Rules/16f8815d.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://cdd233.github.io/Rules/16f8815d.html","path":"Rules/16f8815d.html","title":"Git常用命令"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Git常用命令 | cdd233</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?e7d7b9514690635d0dd540e0fb9d3f80"></script>
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">cdd233</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Blog Python</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-timeline"><a href="/timeline/" rel="section"><i class="fa fa-map-signs fa-fw"></i>时间轴</a></li><li class="menu-item menu-item-messageboard"><a href="/messageboard/" rel="section"><i class="fa fa-at fa-fw"></i>留言板</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-text">初始化配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E9%82%AE%E7%AE%B1"><span class="nav-text">配置用户名和邮箱</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BASSH%E5%AF%86%E9%92%A5"><span class="nav-text">创建SSH密钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E9%92%A5%E8%B4%B4%E5%88%B0Github"><span class="nav-text">公钥贴到Github</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">其他常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#remote"><span class="nav-text">remote</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%BF%E7%94%A8-v%E5%8F%AF%E4%BB%A5%E6%9F%A5%E7%9C%8B%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA%E7%9A%84%E7%BD%91%E5%9D%80"><span class="nav-text">查看所有的远程主机，使用-v可以查看远程主机的网址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA%EF%BC%8C%E5%B9%B6%E8%AE%BE%E4%B8%BB%E6%9C%BA%E5%90%8D%E4%B8%BAorigin"><span class="nav-text">关联远程主机，并设主机名为origin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E4%B8%BB%E6%9C%BA%E5%90%8D%E4%B8%BAorigin%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA"><span class="nav-text">删除主机名为origin的远程主机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#branch"><span class="nav-text">branch</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E6%89%80%E5%9C%A8%E5%88%86%E6%94%AF%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-text">查看当前所在分支的情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%88%86%E6%94%AF-a"><span class="nav-text">创建分支 a</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%87%E6%8D%A2%E5%88%B0%E5%88%86%E6%94%AF-a"><span class="nav-text">切换到分支 a</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%B9%B6%E5%88%87%E6%8D%A2%E5%88%B0%E5%88%86%E6%94%AF-a"><span class="nav-text">创建并切换到分支 a</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%88%86%E6%94%AF-a-%EF%BC%8C%E8%8B%A5-a-%E5%88%86%E6%94%AF%E7%9A%84%E5%86%85%E5%AE%B9%E6%B2%A1%E5%90%88%E5%B9%B6%E5%88%B0%E5%85%B6%E4%BB%96%E5%88%86%E6%94%AF%EF%BC%8C%E5%88%99%E9%9C%80%E8%A6%81%E4%BD%BF%E7%94%A8-D%E5%BC%BA%E5%88%B6%E5%88%A0%E9%99%A4"><span class="nav-text">删除分支 a ，若 a 分支的内容没合并到其他分支，则需要使用-D强制删除</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#merge"><span class="nav-text">merge</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF-a-%E7%9A%84%E5%86%85%E5%AE%B9%E5%88%B0%E5%88%86%E6%94%AFmaster%E4%B8%8A%EF%BC%88%E5%BF%85%E9%A1%BB%E6%8A%8A%E6%89%80%E5%9C%A8%E5%88%86%E6%94%AF%E5%88%87%E6%8D%A2%E5%88%B0master%E4%B8%8A%EF%BC%89"><span class="nav-text">合并分支 a 的内容到分支master上（必须把所在分支切换到master上）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clone"><span class="nav-text">clone</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E8%BF%9C%E7%A8%8B%E5%BA%93%E5%85%8B%E9%9A%86repository%E5%88%B0%E5%BD%93%E5%89%8D%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="nav-text">从远程库克隆repository到当前文件夹</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#status"><span class="nav-text">status</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E5%B7%A5%E4%BD%9C%E6%A0%91%E7%8A%B6%E6%80%81"><span class="nav-text">显示工作树状态</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#push"><span class="nav-text">push</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%87%E4%BB%B6%E5%B9%B6%E6%9B%B4%E6%96%B0%E6%8E%A8%E9%80%81%E5%88%B0%E8%BF%9C%E7%A8%8Bmaster%E5%88%86%E6%94%AF"><span class="nav-text">添加文件并更新推送到远程master分支</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E5%B9%B6%E6%9B%B4%E6%96%B0%E6%8E%A8%E9%80%81%E5%88%B0%E8%BF%9C%E7%A8%8Bmaster%E5%88%86%E6%94%AF"><span class="nav-text">删除文件并更新推送到远程master分支</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E8%BF%9C%E7%A8%8Bmaster%E5%88%86%E6%94%AF%E4%B8%8B%E8%BD%BD%E6%9B%B4%E6%96%B0%E7%9A%84%E5%86%85%E5%AE%B9%E5%88%B0%E6%9C%AC%E5%9C%B0"><span class="nav-text">从远程master分支下载更新的内容到本地</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tromixfuc"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Tromixfuc</p>
+  <div class="site-description" itemprop="description">——へ 与其渴望关怀，不如一起精彩！</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/timeline/">
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cdd233" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cdd233" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:archlinux@vip.qq.com" title="E-Mail → mailto:archlinux@vip.qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://example.com/" title="https:&#x2F;&#x2F;example.com&#x2F;" rel="noopener" target="_blank">example1</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://example.com/" title="https:&#x2F;&#x2F;example.com&#x2F;" rel="noopener" target="_blank">example2</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://example.com/" title="https:&#x2F;&#x2F;example.com&#x2F;" rel="noopener" target="_blank">example3</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://cdd233.github.io/Rules/16f8815d.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Tromixfuc">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="cdd233">
+      <meta itemprop="description" content="——へ 与其渴望关怀，不如一起精彩！">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Git常用命令 | cdd233">
+      <meta itemprop="description" content="<!-- more -->">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git常用命令
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2015-10-22 00:00:00" itemprop="dateCreated datePublished" datetime="2015-10-22T00:00:00+08:00">2015-10-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-09-20 02:52:20" itemprop="dateModified" datetime="2021-09-20T02:52:20+08:00">2021-09-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Rules/" itemprop="url" rel="index"><span itemprop="name">Rules</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description"><!-- more --></div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h2><h3 id="配置用户名和邮箱"><a href="#配置用户名和邮箱" class="headerlink" title="配置用户名和邮箱"></a>配置用户名和邮箱</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global user.name <span class="string">&quot;zhazhahui&quot;</span></span><br><span class="line">$ git config --global user.email <span class="string">&quot;zhazhahui@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置好用户名和邮箱后，会在当前用户主目录下建立<code>.gitconfig</code>文件，该配置文件即<code>git</code>全局配置的文件，一般配置方法为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global &lt;配置名称&gt; &lt;配置的值&gt;</span><br></pre></td></tr></table></figure>
+<p>假如想在某个项目里设置某个值与全局设置有区别，可以把<code>--global</code>去掉，会在当前项目目录下创建<code>.git/config</code>来对当前项目配置单独生效<br><br></p>
+<h3 id="创建SSH密钥"><a href="#创建SSH密钥" class="headerlink" title="创建SSH密钥"></a>创建SSH密钥</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C <span class="string">&quot;zhazhahui@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>创建成功后，用户主目录会生成<code>.ssh</code>，含<code>id_rsa</code>、<code>id_rsa.pub</code>两个文件，即<code>SSH Key</code>的密钥对</p>
+<blockquote>
+<p><code>id_rsa</code>(私钥)不能泄露出去，<code>id_rsa.pub</code>(公钥)可以放心告诉任何人</p>
+</blockquote>
+<br>
+
+<h3 id="公钥贴到Github"><a href="#公钥贴到Github" class="headerlink" title="公钥贴到Github"></a>公钥贴到<a target="_blank" rel="noopener" href="https://github.com/" title="点击跳转至GIthub官网..">Github</a></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> /home/&lt;user&gt;/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Tip：　文件的路径根据自己的实际路径进行更改</p>
+</blockquote>
+<hr>
+<p><br><br></p>
+<h2 id="其他常用命令"><a href="#其他常用命令" class="headerlink" title="其他常用命令"></a>其他常用命令</h2><h3 id="remote"><a href="#remote" class="headerlink" title="remote"></a>remote</h3><h4 id="查看所有的远程主机，使用-v可以查看远程主机的网址"><a href="#查看所有的远程主机，使用-v可以查看远程主机的网址" class="headerlink" title="查看所有的远程主机，使用-v可以查看远程主机的网址"></a>查看所有的远程主机，使用<code>-v</code>可以查看远程主机的网址</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git remote -v</span><br></pre></td></tr></table></figure>
+
+<h4 id="关联远程主机，并设主机名为origin"><a href="#关联远程主机，并设主机名为origin" class="headerlink" title="关联远程主机，并设主机名为origin"></a>关联远程主机，并设主机名为<code>origin</code></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git remote add origin https://github.com/liangzaiming/example.git</span><br></pre></td></tr></table></figure>
+
+<h4 id="删除主机名为origin的远程主机"><a href="#删除主机名为origin的远程主机" class="headerlink" title="删除主机名为origin的远程主机"></a>删除主机名为<code>origin</code>的远程主机</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git remote remove origin</span><br></pre></td></tr></table></figure>
+<br>
+
+
+<h3 id="branch"><a href="#branch" class="headerlink" title="branch"></a>branch</h3><h4 id="查看当前所在分支的情况"><a href="#查看当前所在分支的情况" class="headerlink" title="查看当前所在分支的情况"></a>查看当前所在分支的情况</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git branch</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建分支-a"><a href="#创建分支-a" class="headerlink" title="创建分支 a"></a>创建分支 a</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git branch a</span><br></pre></td></tr></table></figure>
+
+<h4 id="切换到分支-a"><a href="#切换到分支-a" class="headerlink" title="切换到分支 a"></a>切换到分支 a</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout a</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建并切换到分支-a"><a href="#创建并切换到分支-a" class="headerlink" title="创建并切换到分支 a"></a>创建并切换到分支 a</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b a</span><br></pre></td></tr></table></figure>
+
+<h4 id="删除分支-a-，若-a-分支的内容没合并到其他分支，则需要使用-D强制删除"><a href="#删除分支-a-，若-a-分支的内容没合并到其他分支，则需要使用-D强制删除" class="headerlink" title="删除分支 a ，若 a 分支的内容没合并到其他分支，则需要使用-D强制删除"></a>删除分支 a ，若 a 分支的内容没合并到其他分支，则需要使用<code>-D</code>强制删除</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d a</span><br></pre></td></tr></table></figure>
+<br>
+
+
+<h3 id="merge"><a href="#merge" class="headerlink" title="merge"></a>merge</h3><h4 id="合并分支-a-的内容到分支master上（必须把所在分支切换到master上）"><a href="#合并分支-a-的内容到分支master上（必须把所在分支切换到master上）" class="headerlink" title="合并分支 a 的内容到分支master上（必须把所在分支切换到master上）"></a>合并分支 a 的内容到分支<code>master</code>上（必须把所在分支切换到<code>master</code>上）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git merge a</span><br></pre></td></tr></table></figure>
+<br>
+
+
+<h3 id="clone"><a href="#clone" class="headerlink" title="clone"></a>clone</h3><h4 id="从远程库克隆repository到当前文件夹"><a href="#从远程库克隆repository到当前文件夹" class="headerlink" title="从远程库克隆repository到当前文件夹"></a>从远程库克隆<code>repository</code>到当前文件夹</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/liangzaiming/example.git</span><br></pre></td></tr></table></figure>
+<br>
+
+<h3 id="status"><a href="#status" class="headerlink" title="status"></a>status</h3><h4 id="显示工作树状态"><a href="#显示工作树状态" class="headerlink" title="显示工作树状态"></a>显示工作树状态</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git status</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><br><br></p>
+<h3 id="push"><a href="#push" class="headerlink" title="push"></a>push</h3><h4 id="添加文件并更新推送到远程master分支"><a href="#添加文件并更新推送到远程master分支" class="headerlink" title="添加文件并更新推送到远程master分支"></a>添加文件并更新推送到远程<code>master</code>分支</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git add &lt;fileName&gt;</span><br><span class="line">$ git commit -m <span class="string">&quot;Here write the changes of explain&quot;</span></span><br><span class="line">$ git push origin master</span><br></pre></td></tr></table></figure>
+<br>
+
+<h4 id="删除文件并更新推送到远程master分支"><a href="#删除文件并更新推送到远程master分支" class="headerlink" title="删除文件并更新推送到远程master分支"></a>删除文件并更新推送到远程<code>master</code>分支</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">rm</span> &lt;fileName&gt;</span><br><span class="line">$ git commit -m <span class="string">&quot;Here write the changes of explain&quot;</span></span><br><span class="line">$ git push origin master</span><br></pre></td></tr></table></figure>
+<br>
+
+<h4 id="从远程master分支下载更新的内容到本地"><a href="#从远程master分支下载更新的内容到本地" class="headerlink" title="从远程master分支下载更新的内容到本地"></a>从远程<code>master</code>分支下载更新的内容到本地</h4><p>　　多人协作时<code>push</code>先<code>pull</code>，不容易发生冲突</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git pull origin master</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><br><br></p>
+<blockquote>
+<p>Tips:   By the way, if u want to know even more operations for the git.<br>plese click this net link：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/19FLS9--Gz1EscIUj-grJAQ">learn-github-from-zero.pdf</a>　　password： <del>ppa9</del></p>
+</blockquote>
+<hr>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Time</th>
+<th>Remark</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>create</td>
+<td>2015.10.22</td>
+<td>创建并记录部分语法</td>
+</tr>
+<tr>
+<td>update</td>
+<td>2016.08.11</td>
+<td>重构文章的内容和排版,并增加部分语法</td>
+</tr>
+<tr>
+<td>update</td>
+<td>2017.04.11</td>
+<td>添加部分常用的语法</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>最後，打赏一杯咖啡 ?</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="Tromixfuc 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Git/" rel="tag"># Git</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/Linux/2a8a344e.html" rel="next" title="Archlinux+Windows10双系统安装教程">
+                  Archlinux+Windows10双系统安装教程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zMDgyMi83Mzc0"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tromixfuc</span>
+</div>
+
+
+  <div class="powered-by"><a href="#">Lucky dog</a> | blog - <a href="/">cdd233.github.io</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://cdd233.github.io/Rules/16f8815d.html"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>
+
+
+
+<!-- 网站添加点击红心特效 -->
+<script type="text/javascript" src="/js/click-love.js"></script>
+
+<!-- 网站标题崩溃欺骗 -->
+<script type="text/javascript" src="/js/title-cheat.js"></script>
