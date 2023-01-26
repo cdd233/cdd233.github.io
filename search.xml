@@ -779,56 +779,6 @@
       </tags>
   </entry>
   <entry>
-    <title>「Scrapy」爬虫过程中避免被禁的几个小方法</title>
-    <url>/Technique/8cd17fc.html</url>
-    <content><![CDATA[<h3 id="0x01-动态设置-UserAgent"><a href="#0x01-动态设置-UserAgent" class="headerlink" title="0x01. 动态设置 UserAgent"></a>0x01. 动态设置 UserAgent</h3><blockquote>
-<p>通过不停地切换<code>UserAgent</code> ，模拟使用不同的浏览器访问</p>
-</blockquote>
-<p>推荐使用<a href="https://github.com/hellysmile/fake-useragent"><code>fake-useragent</code></a>，为我们提供了众多的<code>UserAgent</code>，而且使用方法也简单<br><br></p>
-<h4 id="a-安装fake-useragent"><a href="#a-安装fake-useragent" class="headerlink" title="a. 安装fake-useragent"></a>a. 安装<code>fake-useragent</code></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install fake-useragent        <span class="comment"># fake-useragent详细用法可查阅Github上的文档</span></span><br></pre></td></tr></table></figure>
-<br>
-
-
-
-<h4 id="b-添加middleware"><a href="#b-添加middleware" class="headerlink" title="b. 添加middleware"></a>b. 添加<code>middleware</code></h4><p>添加下面内容到<code>middlewares.py</code>，主要是重写<code>process_request()</code></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 动态设置UserAgent，可自定义浏览器类型，如chrome、firefox等，需要在settings.py中设置，不设置默认会返回random</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RandomUserAgentMiddlewares</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, crawler</span>):</span><br><span class="line">        self.ua = UserAgent()</span><br><span class="line">        self.ua_type = crawler.settings.get(<span class="string">&#x27;RANDOM_UA_TYPE&#x27;</span>, <span class="string">&#x27;random&#x27;</span>)        <span class="comment"># 自定义获取的浏览器类型</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">from_crawler</span>(<span class="params">cls, crawler</span>):</span><br><span class="line">        <span class="keyword">return</span> cls(crawler)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">process_request</span>(<span class="params">self, request, spider</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">get_ua</span>():</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">getattr</span>(self.ua, self.ua_type)</span><br><span class="line">        request.headers.setdefault(<span class="string">&#x27;User-Agent&#x27;</span>, get_ua())</span><br></pre></td></tr></table></figure>
-
-<p>在<code>settings.py</code>中关闭默认的<code>UserAgentMiddleware</code>，启用自定义的<code>RandomUserAgentMiddlewares</code>，并设置<code>fake-useragent</code>默认的<code>UserAgent</code>类型</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOADER_MIDDLEWARES = &#123;</span><br><span class="line">    <span class="string">&#x27;scrapy.downloadermiddlewares.useragent.UserAgentMiddleware&#x27;</span>: <span class="literal">None</span>,</span><br><span class="line">    <span class="string">&#x27;tutorial.middlewares.RandomUserAgentMiddlewares&#x27;</span>: <span class="number">543</span>,</span><br><span class="line">&#125;</span><br><span class="line">RANDOM_UA_TYPE = <span class="string">&#x27;chrome&#x27;</span>        <span class="comment"># 左边的key是自定义的，能配合middlewares中的参数获取即可</span></span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h3 id="0x02-禁用Cookie"><a href="#0x02-禁用Cookie" class="headerlink" title="0x02. 禁用Cookie"></a>0x02. 禁用Cookie</h3><blockquote>
-<p>在<code>settings.py</code>中禁用<code>cookie</code>，部分免登陆的网站会在<code>cookie</code>中做标记，判断是否是爬虫</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">COOKIES_ENABLED = <span class="literal">False</span>            <span class="comment"># 在spider中直接设置也可以</span></span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h3 id="0x03-设置延迟下载"><a href="#0x03-设置延迟下载" class="headerlink" title="0x03. 设置延迟下载"></a>0x03. 设置延迟下载</h3><blockquote>
-<p>在从同一网站下载连续页面之前应等待的时间</p>
-</blockquote>
-<p>同样是修改<code>settings.py</code>，设置延迟下载，尽量地模拟人工操作</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOAD_DELAY = <span class="number">3</span>            <span class="comment"># 在spider中直接设置也可以</span></span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h3 id="0x04-动态-ip-代理"><a href="#0x04-动态-ip-代理" class="headerlink" title="0x04. 动态 ip 代理"></a>0x04. 动态 ip 代理</h3><blockquote>
-<p>网站常用的反爬虫就是封 ip 一段时间，所以我们可以设置动态的 ip 代理解决</p>
-</blockquote>
-<p>跟<a href="#b-%E6%B7%BB%E5%8A%A0-middleware">0x01.b</a>差不多，添加<code>middleware</code></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RandomProxyMiddlewares</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">process_request</span>(<span class="params">self, request, spider</span>):</span><br><span class="line">        proxy = rq.get(<span class="string">&#x27;http://localhost:5000/api&#x27;</span>).text    <span class="comment"># 这是我自己的接口，请求成功直接返回代理 39.104.75.54:8080</span></span><br><span class="line">        request.meta[<span class="string">&#x27;proxy&#x27;</span>] = <span class="string">&#x27;http://&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(proxy)</span><br></pre></td></tr></table></figure>
-
-<p>在<code>settings.py</code>中启用<code>MIDDLEWARES</code></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOADER_MIDDLEWARES = &#123;</span><br><span class="line">    <span class="comment"># &#x27;tutorial.middlewares.RandomUserAgentMiddlewares&#x27;: 543,</span></span><br><span class="line">    <span class="comment"># &#x27;scrapy.downloadermiddlewares.useragent.UserAgentMiddleware&#x27;: None,</span></span><br><span class="line">    <span class="string">&#x27;tutorial.middlewares.RandomProxyMiddlewares&#x27;</span>: <span class="number">544</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<blockquote>
-<p>到这里就没啦，贴一下 scrapy 官网提供的方法：<a href="https://doc.scrapy.org/en/master/topics/practices.html#avoiding-getting-banned">avoiding-getting-banned</a></p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Technique</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>Scrapy</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL常用语法</title>
     <url>/Rules/59fbd90c.html</url>
     <content><![CDATA[<p>DDL：Data Definition Language	 数据定义语言<br>DML：Data Manipulation Language	数据操纵语言</p>
@@ -1029,6 +979,106 @@
       </tags>
   </entry>
   <entry>
+    <title>「Scrapy」爬虫过程中避免被禁的几个小方法</title>
+    <url>/Technique/8cd17fc.html</url>
+    <content><![CDATA[<h3 id="0x01-动态设置-UserAgent"><a href="#0x01-动态设置-UserAgent" class="headerlink" title="0x01. 动态设置 UserAgent"></a>0x01. 动态设置 UserAgent</h3><blockquote>
+<p>通过不停地切换<code>UserAgent</code> ，模拟使用不同的浏览器访问</p>
+</blockquote>
+<p>推荐使用<a href="https://github.com/hellysmile/fake-useragent"><code>fake-useragent</code></a>，为我们提供了众多的<code>UserAgent</code>，而且使用方法也简单<br><br></p>
+<h4 id="a-安装fake-useragent"><a href="#a-安装fake-useragent" class="headerlink" title="a. 安装fake-useragent"></a>a. 安装<code>fake-useragent</code></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install fake-useragent        <span class="comment"># fake-useragent详细用法可查阅Github上的文档</span></span><br></pre></td></tr></table></figure>
+<br>
+
+
+
+<h4 id="b-添加middleware"><a href="#b-添加middleware" class="headerlink" title="b. 添加middleware"></a>b. 添加<code>middleware</code></h4><p>添加下面内容到<code>middlewares.py</code>，主要是重写<code>process_request()</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 动态设置UserAgent，可自定义浏览器类型，如chrome、firefox等，需要在settings.py中设置，不设置默认会返回random</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RandomUserAgentMiddlewares</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, crawler</span>):</span><br><span class="line">        self.ua = UserAgent()</span><br><span class="line">        self.ua_type = crawler.settings.get(<span class="string">&#x27;RANDOM_UA_TYPE&#x27;</span>, <span class="string">&#x27;random&#x27;</span>)        <span class="comment"># 自定义获取的浏览器类型</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">from_crawler</span>(<span class="params">cls, crawler</span>):</span><br><span class="line">        <span class="keyword">return</span> cls(crawler)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">process_request</span>(<span class="params">self, request, spider</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">get_ua</span>():</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">getattr</span>(self.ua, self.ua_type)</span><br><span class="line">        request.headers.setdefault(<span class="string">&#x27;User-Agent&#x27;</span>, get_ua())</span><br></pre></td></tr></table></figure>
+
+<p>在<code>settings.py</code>中关闭默认的<code>UserAgentMiddleware</code>，启用自定义的<code>RandomUserAgentMiddlewares</code>，并设置<code>fake-useragent</code>默认的<code>UserAgent</code>类型</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOADER_MIDDLEWARES = &#123;</span><br><span class="line">    <span class="string">&#x27;scrapy.downloadermiddlewares.useragent.UserAgentMiddleware&#x27;</span>: <span class="literal">None</span>,</span><br><span class="line">    <span class="string">&#x27;tutorial.middlewares.RandomUserAgentMiddlewares&#x27;</span>: <span class="number">543</span>,</span><br><span class="line">&#125;</span><br><span class="line">RANDOM_UA_TYPE = <span class="string">&#x27;chrome&#x27;</span>        <span class="comment"># 左边的key是自定义的，能配合middlewares中的参数获取即可</span></span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h3 id="0x02-禁用Cookie"><a href="#0x02-禁用Cookie" class="headerlink" title="0x02. 禁用Cookie"></a>0x02. 禁用Cookie</h3><blockquote>
+<p>在<code>settings.py</code>中禁用<code>cookie</code>，部分免登陆的网站会在<code>cookie</code>中做标记，判断是否是爬虫</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">COOKIES_ENABLED = <span class="literal">False</span>            <span class="comment"># 在spider中直接设置也可以</span></span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h3 id="0x03-设置延迟下载"><a href="#0x03-设置延迟下载" class="headerlink" title="0x03. 设置延迟下载"></a>0x03. 设置延迟下载</h3><blockquote>
+<p>在从同一网站下载连续页面之前应等待的时间</p>
+</blockquote>
+<p>同样是修改<code>settings.py</code>，设置延迟下载，尽量地模拟人工操作</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOAD_DELAY = <span class="number">3</span>            <span class="comment"># 在spider中直接设置也可以</span></span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h3 id="0x04-动态-ip-代理"><a href="#0x04-动态-ip-代理" class="headerlink" title="0x04. 动态 ip 代理"></a>0x04. 动态 ip 代理</h3><blockquote>
+<p>网站常用的反爬虫就是封 ip 一段时间，所以我们可以设置动态的 ip 代理解决</p>
+</blockquote>
+<p>跟<a href="#b-%E6%B7%BB%E5%8A%A0-middleware">0x01.b</a>差不多，添加<code>middleware</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RandomProxyMiddlewares</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">process_request</span>(<span class="params">self, request, spider</span>):</span><br><span class="line">        proxy = rq.get(<span class="string">&#x27;http://localhost:5000/api&#x27;</span>).text    <span class="comment"># 这是我自己的接口，请求成功直接返回代理 39.104.75.54:8080</span></span><br><span class="line">        request.meta[<span class="string">&#x27;proxy&#x27;</span>] = <span class="string">&#x27;http://&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(proxy)</span><br></pre></td></tr></table></figure>
+
+<p>在<code>settings.py</code>中启用<code>MIDDLEWARES</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DOWNLOADER_MIDDLEWARES = &#123;</span><br><span class="line">    <span class="comment"># &#x27;tutorial.middlewares.RandomUserAgentMiddlewares&#x27;: 543,</span></span><br><span class="line">    <span class="comment"># &#x27;scrapy.downloadermiddlewares.useragent.UserAgentMiddleware&#x27;: None,</span></span><br><span class="line">    <span class="string">&#x27;tutorial.middlewares.RandomProxyMiddlewares&#x27;</span>: <span class="number">544</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<blockquote>
+<p>到这里就没啦，贴一下 scrapy 官网提供的方法：<a href="https://doc.scrapy.org/en/master/topics/practices.html#avoiding-getting-banned">avoiding-getting-banned</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Technique</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>「Scrapy」自定义图片管道ImagesPipeline下载图片</title>
+    <url>/Technique/aa344f5b.html</url>
+    <content><![CDATA[<p>题外话：前些天不是重新搭建了hexo吗，然后今天有个知识点忘记了，想看看之前的笔记，结果发现，没了，是真的没了！！沃日，之前重新搭建的时候忘记备份了，因为Windows下有一份旧资料，恰巧那份旧资料是几乎没同步过，所以出事了…	教训：<font color="red">凡事记得先备份！！</font></p>
+<hr>
+<p><br><br></p>
+<h2 id="一、使用场景"><a href="#一、使用场景" class="headerlink" title="一、使用场景"></a>一、使用场景</h2><p>当我们在抓取某些资源的时候，刚好同时想下载它的图片的时候，就可以用到<code>scrapy</code>提供的一个<code>item pipeline</code>，这条管道被称作图片管道，在<a href="https://scrapy-chs.readthedocs.io/zh_CN/latest/topics/images.html#scrapy.contrib.pipeline.images.ImagesPipeline">ImagesPipeline</a>类中实现，提供了一个方便并具有额外特性的方法，来下载并本地存储图片:</p>
+<ul>
+<li>将所有下载的图片转换成通用的格式（JPG）和模式（RGB）</li>
+<li>避免重新下载最近已经下载过的图片</li>
+<li>缩略图生成</li>
+<li>检测图像的宽&#x2F;高，确保它们满足最小限制<br><br><br></li>
+</ul>
+<h2 id="二、项目实战"><a href="#二、项目实战" class="headerlink" title="二、项目实战"></a>二、项目实战</h2><p>这里直接使用自定义的方法，以便于自定义我们图片的名称、下载路径<br><br></p>
+<h3 id="0x01-定义一个Item"><a href="#0x01-定义一个Item" class="headerlink" title="0x01. 定义一个Item"></a>0x01. 定义一个Item</h3><p>在<code>items.py</code>中新建一个<code>class</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"></span><br><span class="line"><span class="comment">## 这里我只定义两个属性，标题用于存储图片的父目录，链接截取一部分当图片名称</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ImageItem</span>(scrapy.Item):</span><br><span class="line">    image_urls = scrapy.Field()        <span class="comment"># 图片链接</span></span><br><span class="line">    alt = scrapy.Field()        <span class="comment"># 图片标题</span></span><br></pre></td></tr></table></figure>
+<br>
+
+<h3 id="0x02-配置settings-py"><a href="#0x02-配置settings-py" class="headerlink" title="0x02. 配置settings.py"></a>0x02. 配置<code>settings.py</code></h3><p>在<code>settings.py</code>中修改或添加以下信息</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启用图片管道动能，MyImagesPipeline是我自定义的class，在下面的步骤会进行创建</span></span><br><span class="line">ITEM_PIPELINES = &#123;<span class="string">&#x27;meituba.pipelines.MyImagesPipeline&#x27;</span>: <span class="number">1</span>,&#125;</span><br><span class="line">IMAGES_STORE = <span class="string">&#x27;images&#x27;</span>                <span class="comment"># 存储的根目录</span></span><br></pre></td></tr></table></figure>
+
+<p>如果需要生成缩略图：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 当前默认存储路径为&lt;IMAGES_STORE&gt;/thumbs/big和&lt;IMAGES_STORE&gt;/thumbs/small</span></span><br><span class="line">IMAGES_THUMBS = &#123;</span><br><span class="line">    <span class="string">&#x27;small&#x27;</span>: (<span class="number">50</span>, <span class="number">50</span>),            <span class="comment"># key和value均可自定义</span></span><br><span class="line">    <span class="string">&#x27;big&#x27;</span>: (<span class="number">270</span>, <span class="number">270</span>),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果需要过滤过小的图片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 过滤图片高度小于170、宽度小于260的图片</span></span><br><span class="line">IMAGES_MIN_HEIGHT = <span class="number">170</span></span><br><span class="line">IMAGES_MIN_WIDTH = <span class="number">260</span></span><br></pre></td></tr></table></figure>
+
+<p>如果需要忽略近期已经下载过的图片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 90天的图片失效期限</span></span><br><span class="line">IMAGES_EXPIRES = <span class="number">90</span></span><br></pre></td></tr></table></figure>
+<br>
+
+<h3 id="0x03-自定义图片管道"><a href="#0x03-自定义图片管道" class="headerlink" title="0x03. 自定义图片管道"></a>0x03. 自定义图片管道</h3><p>在<code>pipelines.py</code>中重写<code>file_path()</code>，达到自定义图片存储位置和自定义图片名称的效果</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> scrapy.pipelines.images <span class="keyword">import</span> ImagesPipeline</span><br><span class="line"><span class="keyword">from</span> scrapy.http <span class="keyword">import</span> Request</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyImagesPipeline</span>(<span class="title class_ inherited__">ImagesPipeline</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_media_requests</span>(<span class="params">self, item, info</span>):</span><br><span class="line">        sign = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> image_url <span class="keyword">in</span> item[<span class="string">&#x27;image_urls&#x27;</span>]:</span><br><span class="line">            sign += <span class="number">1</span></span><br><span class="line">            <span class="keyword">yield</span> Request(url=image_url, meta=&#123;<span class="string">&#x27;item&#x27;</span>: item, <span class="string">&#x27;sign&#x27;</span>: sign&#125;)</span><br><span class="line">    <span class="comment"># 重写file_path()，自定义存储文件夹名字和图片名字</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">file_path</span>(<span class="params">self, request, response=<span class="literal">None</span>, info=<span class="literal">None</span></span>):</span><br><span class="line">        item = request.meta[<span class="string">&#x27;item&#x27;</span>]</span><br><span class="line">        sign = request.meta[<span class="string">&#x27;sign&#x27;</span>]-<span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;%s/%s&#x27;</span> % (item[<span class="string">&#x27;alt&#x27;</span>][sign], request.url.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>])</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 重写thumb_path()，自定义缩略图文件名</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">thumb_path</span>(<span class="params">self, request, thumb_id, response=<span class="literal">None</span>, info=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;thumbs/%s/%s&#x27;</span> % (thumb_id, request.url.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<br>
+
+<h3 id="0x04-编写spider"><a href="#0x04-编写spider" class="headerlink" title="0x04. 编写spider"></a>0x04. 编写spider</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> Spider</span><br><span class="line"><span class="keyword">from</span> meituba.items <span class="keyword">import</span> ImageItem</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MeituSpider</span>(<span class="title class_ inherited__">Spider</span>):</span><br><span class="line">    name = <span class="string">&quot;meitu&quot;</span></span><br><span class="line">    <span class="comment"># allowed_domains = [&quot;meituba.com&quot;]</span></span><br><span class="line">    start_urls = [<span class="string">&#x27;http://www.meituba.com/tag/xueshengmei.html&#x27;</span>]</span><br><span class="line">    download_delay = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">parse</span>(<span class="params">self, response</span>):</span><br><span class="line">        item = ImageItem()</span><br><span class="line">        image_urls = response.xpath(<span class="string">&#x27;/html/body/div[4]/div[1]/div[2]/ul/li/div[1]/a/img/@src&#x27;</span>).extract()</span><br><span class="line">        alt = response.xpath(<span class="string">&#x27;/html/body/div[4]/div[1]/div[2]/ul/li/div[1]/a/img/@alt&#x27;</span>).extract()</span><br><span class="line">        item[<span class="string">&#x27;image_urls&#x27;</span>] = image_urls</span><br><span class="line">        item[<span class="string">&#x27;alt&#x27;</span>] = alt</span><br><span class="line">        <span class="keyword">yield</span> item</span><br></pre></td></tr></table></figure>
+<p><br><br></p>
+<h2 id="三、效果展示"><a href="#三、效果展示" class="headerlink" title="三、效果展示"></a>三、效果展示</h2><p>运行<code>scrapy crawl meitu</code>， 即可查看效果<br><br><br></p>
+<blockquote>
+<p>ps：凡事先看官网文档：（<a href="https://scrapy-chs.readthedocs.io/zh_CN/latest/topics/images.html">中文文档</a>非官方，英文好的可以看<a href="https://docs.scrapy.org/en/latest">英文官方网站</a>）</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Technique</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>利用PyInstaller打包发布exe程序</title>
     <url>/Technique/53934d9f.html</url>
     <content><![CDATA[<p>在Windows下每次运行python脚本都得打开CMD，简直难受得一批！找了一下可以打包成exe程序的库，事情一下子就轻松得多了！<br><br><br></p>
@@ -1172,53 +1222,167 @@
       </tags>
   </entry>
   <entry>
-    <title>「Scrapy」自定义图片管道ImagesPipeline下载图片</title>
-    <url>/Technique/aa344f5b.html</url>
-    <content><![CDATA[<p>题外话：前些天不是重新搭建了hexo吗，然后今天有个知识点忘记了，想看看之前的笔记，结果发现，没了，是真的没了！！沃日，之前重新搭建的时候忘记备份了，因为Windows下有一份旧资料，恰巧那份旧资料是几乎没同步过，所以出事了…	教训：<font color="red">凡事记得先备份！！</font></p>
-<hr>
-<p><br><br></p>
-<h2 id="一、使用场景"><a href="#一、使用场景" class="headerlink" title="一、使用场景"></a>一、使用场景</h2><p>当我们在抓取某些资源的时候，刚好同时想下载它的图片的时候，就可以用到<code>scrapy</code>提供的一个<code>item pipeline</code>，这条管道被称作图片管道，在<a href="https://scrapy-chs.readthedocs.io/zh_CN/latest/topics/images.html#scrapy.contrib.pipeline.images.ImagesPipeline">ImagesPipeline</a>类中实现，提供了一个方便并具有额外特性的方法，来下载并本地存储图片:</p>
+    <title>等保测评-MySQL相关记录</title>
+    <url>/%E7%AD%89%E4%BF%9D%E6%B5%8B%E8%AF%84/737ad06e.html</url>
+    <content><![CDATA[<h2 id="配置生效时效"><a href="#配置生效时效" class="headerlink" title="配置生效时效"></a>配置生效时效</h2><ol>
+<li><p>修改配置文件，重启MySQL服务生效。</p>
+</li>
+<li><p>SET GLOBAL，仅对当前会话及新会话生效，旧会话不生效，MySQL服务重启后失效。</p>
+</li>
+<li><p>SET SESSION，仅对当前会话生效，其他会话不生效，MySQL服务重启后失效。</p>
+</li>
+</ol>
+<p><strong>修改配置的最优解是SET GLOBAL，然后修改配置文件，可以避免重启MySQL服务，并且MySQL服务重启后配置也能自动生效</strong>。</p>
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<h2 id="查看安装路径"><a href="#查看安装路径" class="headerlink" title="查看安装路径"></a>查看安装路径</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show variables like &#x27;%basedir%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select @@basedir;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">which</span> mysql</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -ef | grep mysql</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<h2 id="密码相关参数"><a href="#密码相关参数" class="headerlink" title="密码相关参数"></a>密码相关参数</h2><p><strong>MySQL 5.6.6之后引入</strong>部分参数。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select user,host,password,password_last_changed,password_expired,plugin from mysql.user;</span><br></pre></td></tr></table></figure>
+
+<p><strong><font color="red">password，MySQL 5.7版本后该字段改为authentication_string</font></strong></p>
+<p><strong>password_expired</strong>，该用户的过期时间，Y&#x2F;N</p>
+<p><strong>password_last_changed</strong>，该用户密码最后一次修改的时间</p>
+<p><strong>password_lifetime</strong>，该用户密码的生存时间，默认值为NULL</p>
+<br>
+
+<p><strong>MySQL 5.7.4之后改进</strong>。</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">default_password_lifetime</span>=<span class="number">90</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<h2 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h2><p>查看插件的激活状态。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select PLUGIN_NAME,PLUGIN_STATUS,LOAD_OPTION from information_schema.plugins;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show plugins</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<br>
+
+<h3 id="validate-password"><a href="#validate-password" class="headerlink" title="validate_password"></a>validate_password</h3><p>新密码校验插件，<strong>MySQL 5.6.6之后引入，MySQL 5.7之后默认安装</strong>。</p>
+<h4 id="a-配置查询"><a href="#a-配置查询" class="headerlink" title="a. 配置查询"></a>a. 配置查询</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;validate_password%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="b-相关参数"><a href="#b-相关参数" class="headerlink" title="b. 相关参数"></a>b. 相关参数</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 禁止密码与当前用户名一致</span></span><br><span class="line"><span class="attr">validate_password_check_user_name</span>=<span class="literal">OFF</span></span><br><span class="line"><span class="comment"># 限制密码长度最小为8位</span></span><br><span class="line"><span class="attr">validate_password_length</span>=<span class="number">8</span></span><br><span class="line"><span class="comment"># 密码必须包含的大小写字母个数，受validate_password_policy影响。</span></span><br><span class="line"><span class="attr">validate_password_mixed_case_count</span>=<span class="number">1</span></span><br><span class="line"><span class="comment"># 密码必须包含的数字个数，受validate_password_policy影响。</span></span><br><span class="line"><span class="attr">validate_password_number_count</span>=<span class="number">1</span></span><br><span class="line"><span class="comment"># 密码强度检验等级，可以使用数值0、1、2或相应的符号值LOW、MEDIUM、STRONG来指定。</span></span><br><span class="line"><span class="comment"># 0/LOW：只检查长度。</span></span><br><span class="line"><span class="comment"># 1/MEDIUM：检查长度、数字、大小写、特殊字符。</span></span><br><span class="line"><span class="comment"># 2/STRONG：检查长度、数字、大小写、特殊字符、字典文件。</span></span><br><span class="line"><span class="attr">validate_password_policy</span>=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<br>
+
+<br>
+
+<h3 id="connection-control"><a href="#connection-control" class="headerlink" title="connection-control"></a>connection-control</h3><p><strong>MySQL 5.6.35以后提供</strong>。登录失败次数达到阈值后，响应延迟的时间，而不是锁定账号。</p>
+<h4 id="a-配置查询-1"><a href="#a-配置查询-1" class="headerlink" title="a. 配置查询"></a>a. 配置查询</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;connection_control%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="b-相关参数-1"><a href="#b-相关参数-1" class="headerlink" title="b. 相关参数"></a>b. 相关参数</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 记录登录失败的操作到IS库中</span></span><br><span class="line"><span class="attr">connection-control-failed-login-attempts</span>=FORCE_PLUS_PERMANENT</span><br><span class="line"><span class="comment"># 连续登录失败的次数，默认为3次，0表示不启用</span></span><br><span class="line"><span class="attr">connection_control_failed_connections_threshold</span>=<span class="number">3</span></span><br><span class="line"><span class="comment"># 响应延迟的最大时间，单位为毫秒，默认是25天</span></span><br><span class="line"><span class="attr">connection_control_max_connection_delay</span>=<span class="number">2147483647</span></span><br><span class="line"><span class="comment"># 响应延迟的最小时间，单位为毫秒，默认是1分钟，登录失败次数达到阈值后再失败会叠加时间，直到响应延迟的最大时间</span></span><br><span class="line"><span class="attr">connection_control_min_connection_delay</span>=<span class="number">1000</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><h3 id="一般查询日志（general-log）"><a href="#一般查询日志（general-log）" class="headerlink" title="一般查询日志（general log）"></a>一般查询日志（general log）</h3><p>开启general log能将所有到达MySQL Server的SQL语句记录下来。</p>
+<h4 id="相关参数"><a href="#相关参数" class="headerlink" title="相关参数"></a>相关参数</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 日志开关</span></span><br><span class="line"><span class="attr">general_log</span>=<span class="literal">off</span></span><br><span class="line"><span class="comment"># 日志存放位置</span></span><br><span class="line"><span class="attr">general_log_file</span>=/tmp/general.log</span><br><span class="line"><span class="comment"># 日志输出类型，table/file</span></span><br><span class="line"><span class="attr">log_output</span>=table</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<br>
+
+<h3 id="二进制日志（binlog）"><a href="#二进制日志（binlog）" class="headerlink" title="二进制日志（binlog）"></a>二进制日志（binlog）</h3><p>MySQL的二进制日志可以说是MySQL最重要的日志，记录了所有的DDL和DML语句（更改数据库表和更改内容的SQL语句都会记录到binlog，对数据库的查询select或show等不会被binlog日志记录），以事件形式记录，还包含语句所执行的消耗的时间，MySQL的二进制日志是事务安全型的。<strong>一般来说开启二进制日志大概会有1%的性能损耗</strong>。<br></p>
+<p>二进制日志包括两类文件： </p>
 <ul>
-<li>将所有下载的图片转换成通用的格式（JPG）和模式（RGB）</li>
-<li>避免重新下载最近已经下载过的图片</li>
-<li>缩略图生成</li>
-<li>检测图像的宽&#x2F;高，确保它们满足最小限制<br><br><br></li>
+<li>二进制日志索引文件（文件名后缀为.index）用于记录所有的二进制文件。</li>
 </ul>
-<h2 id="二、项目实战"><a href="#二、项目实战" class="headerlink" title="二、项目实战"></a>二、项目实战</h2><p>这里直接使用自定义的方法，以便于自定义我们图片的名称、下载路径<br><br></p>
-<h3 id="0x01-定义一个Item"><a href="#0x01-定义一个Item" class="headerlink" title="0x01. 定义一个Item"></a>0x01. 定义一个Item</h3><p>在<code>items.py</code>中新建一个<code>class</code></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"></span><br><span class="line"><span class="comment">## 这里我只定义两个属性，标题用于存储图片的父目录，链接截取一部分当图片名称</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ImageItem</span>(scrapy.Item):</span><br><span class="line">    image_urls = scrapy.Field()        <span class="comment"># 图片链接</span></span><br><span class="line">    alt = scrapy.Field()        <span class="comment"># 图片标题</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>二进制日志文件（文件名后缀为.00000*）记录数据库所有的DDL和DML（除了数据查询语句）语句事件。</li>
+</ul>
 <br>
 
-<h3 id="0x02-配置settings-py"><a href="#0x02-配置settings-py" class="headerlink" title="0x02. 配置settings.py"></a>0x02. 配置<code>settings.py</code></h3><p>在<code>settings.py</code>中修改或添加以下信息</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启用图片管道动能，MyImagesPipeline是我自定义的class，在下面的步骤会进行创建</span></span><br><span class="line">ITEM_PIPELINES = &#123;<span class="string">&#x27;meituba.pipelines.MyImagesPipeline&#x27;</span>: <span class="number">1</span>,&#125;</span><br><span class="line">IMAGES_STORE = <span class="string">&#x27;images&#x27;</span>                <span class="comment"># 存储的根目录</span></span><br></pre></td></tr></table></figure>
+<h4 id="日志查询"><a href="#日志查询" class="headerlink" title="日志查询"></a>日志查询</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># log_bin，查看binlog日志的启用状态</span><br><span class="line"># log_bin_basename，查看binlog日志的存放位置，ls -l $log_bin_basename查看日志创建的时间</span><br><span class="line">show global variables like &#x27;%log_bin%&#x27;;</span><br></pre></td></tr></table></figure>
 
-<p>如果需要生成缩略图：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 当前默认存储路径为&lt;IMAGES_STORE&gt;/thumbs/big和&lt;IMAGES_STORE&gt;/thumbs/small</span></span><br><span class="line">IMAGES_THUMBS = &#123;</span><br><span class="line">    <span class="string">&#x27;small&#x27;</span>: (<span class="number">50</span>, <span class="number">50</span>),            <span class="comment"># key和value均可自定义</span></span><br><span class="line">    <span class="string">&#x27;big&#x27;</span>: (<span class="number">270</span>, <span class="number">270</span>),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 查看所有binlog日志列表</span><br><span class="line">show master logs;</span><br></pre></td></tr></table></figure>
 
-<p>如果需要过滤过小的图片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 过滤图片高度小于170、宽度小于260的图片</span></span><br><span class="line">IMAGES_MIN_HEIGHT = <span class="number">170</span></span><br><span class="line">IMAGES_MIN_WIDTH = <span class="number">260</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 查看指定日志文件的内容（以表格形式）</span><br><span class="line">show binlog events in &#x27;mysql-bin.000002&#x27;;</span><br></pre></td></tr></table></figure>
 
-<p>如果需要忽略近期已经下载过的图片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 90天的图片失效期限</span></span><br><span class="line">IMAGES_EXPIRES = <span class="number">90</span></span><br></pre></td></tr></table></figure>
 <br>
 
-<h3 id="0x03-自定义图片管道"><a href="#0x03-自定义图片管道" class="headerlink" title="0x03. 自定义图片管道"></a>0x03. 自定义图片管道</h3><p>在<code>pipelines.py</code>中重写<code>file_path()</code>，达到自定义图片存储位置和自定义图片名称的效果</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> scrapy.pipelines.images <span class="keyword">import</span> ImagesPipeline</span><br><span class="line"><span class="keyword">from</span> scrapy.http <span class="keyword">import</span> Request</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyImagesPipeline</span>(<span class="title class_ inherited__">ImagesPipeline</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_media_requests</span>(<span class="params">self, item, info</span>):</span><br><span class="line">        sign = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> image_url <span class="keyword">in</span> item[<span class="string">&#x27;image_urls&#x27;</span>]:</span><br><span class="line">            sign += <span class="number">1</span></span><br><span class="line">            <span class="keyword">yield</span> Request(url=image_url, meta=&#123;<span class="string">&#x27;item&#x27;</span>: item, <span class="string">&#x27;sign&#x27;</span>: sign&#125;)</span><br><span class="line">    <span class="comment"># 重写file_path()，自定义存储文件夹名字和图片名字</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">file_path</span>(<span class="params">self, request, response=<span class="literal">None</span>, info=<span class="literal">None</span></span>):</span><br><span class="line">        item = request.meta[<span class="string">&#x27;item&#x27;</span>]</span><br><span class="line">        sign = request.meta[<span class="string">&#x27;sign&#x27;</span>]-<span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;%s/%s&#x27;</span> % (item[<span class="string">&#x27;alt&#x27;</span>][sign], request.url.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>])</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 重写thumb_path()，自定义缩略图文件名</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">thumb_path</span>(<span class="params">self, request, thumb_id, response=<span class="literal">None</span>, info=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;thumbs/%s/%s&#x27;</span> % (thumb_id, request.url.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="相关参数-1"><a href="#相关参数-1" class="headerlink" title="相关参数"></a>相关参数</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 日志开关</span></span><br><span class="line"><span class="attr">log_bin</span>=<span class="literal">on</span></span><br><span class="line"><span class="comment"># 日志保存时间，默认为0，即永不删除</span></span><br><span class="line"><span class="attr">expire_logs_days</span>=<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
 <br>
 
-<h3 id="0x04-编写spider"><a href="#0x04-编写spider" class="headerlink" title="0x04. 编写spider"></a>0x04. 编写spider</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> Spider</span><br><span class="line"><span class="keyword">from</span> meituba.items <span class="keyword">import</span> ImageItem</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MeituSpider</span>(<span class="title class_ inherited__">Spider</span>):</span><br><span class="line">    name = <span class="string">&quot;meitu&quot;</span></span><br><span class="line">    <span class="comment"># allowed_domains = [&quot;meituba.com&quot;]</span></span><br><span class="line">    start_urls = [<span class="string">&#x27;http://www.meituba.com/tag/xueshengmei.html&#x27;</span>]</span><br><span class="line">    download_delay = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">parse</span>(<span class="params">self, response</span>):</span><br><span class="line">        item = ImageItem()</span><br><span class="line">        image_urls = response.xpath(<span class="string">&#x27;/html/body/div[4]/div[1]/div[2]/ul/li/div[1]/a/img/@src&#x27;</span>).extract()</span><br><span class="line">        alt = response.xpath(<span class="string">&#x27;/html/body/div[4]/div[1]/div[2]/ul/li/div[1]/a/img/@alt&#x27;</span>).extract()</span><br><span class="line">        item[<span class="string">&#x27;image_urls&#x27;</span>] = image_urls</span><br><span class="line">        item[<span class="string">&#x27;alt&#x27;</span>] = alt</span><br><span class="line">        <span class="keyword">yield</span> item</span><br></pre></td></tr></table></figure>
-<p><br><br></p>
-<h2 id="三、效果展示"><a href="#三、效果展示" class="headerlink" title="三、效果展示"></a>三、效果展示</h2><p>运行<code>scrapy crawl meitu</code>， 即可查看效果<br><br><br></p>
-<blockquote>
-<p>ps：凡事先看官网文档：（<a href="https://scrapy-chs.readthedocs.io/zh_CN/latest/topics/images.html">中文文档</a>非官方，英文好的可以看<a href="https://docs.scrapy.org/en/latest">英文官方网站</a>）</p>
-</blockquote>
+<br>
+
+<h3 id="错误日志（errorlog）"><a href="#错误日志（errorlog）" class="headerlink" title="错误日志（errorlog）"></a>错误日志（errorlog）</h3><p>在MySQL数据库中，<strong>默认开启错误日志功能</strong>。一般情况下，错误日志存储在MySQL数据库的数据文件夹下，通常名称为hostname.err。<br></p>
+<h4 id="配置查询"><a href="#配置查询" class="headerlink" title="配置查询"></a>配置查询</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;log_error%&#x27;; </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;log_warnings%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="相关参数-2"><a href="#相关参数-2" class="headerlink" title="相关参数"></a>相关参数</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">log-error</span>=dir/&#123;filename&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="其他日志"><a href="#其他日志" class="headerlink" title="其他日志"></a>其他日志</h3><p><strong>重做日志（redo log）</strong> 、<strong>回滚日志（undo log）</strong> 、<strong>慢查询日志（slow query log）</strong> 、<strong>中继日志（relay log）</strong>等等不做了解。</p>
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="flush-privileges"><a href="#flush-privileges" class="headerlink" title="flush privileges"></a>flush privileges</h3><p>本质上的作用是将当前user和privilige表中的用户信息&#x2F;权限设置从mysql库（MySQL数据库的内置库）中提取到内存里。MySQL用户数据和权限有修改后，希望在”不重启MySQL服务”的情况下直接生效，那么就需要执行这个命令。通常是在修改root帐号的设置后，怕重启后无法再登录进来，那么直接flush之后就可以看权限设置是否生效。而不必冒太大风险。</p>
+<br>
+
+<h3 id="用户权限"><a href="#用户权限" class="headerlink" title="用户权限"></a>用户权限</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select Host,User,File_priv,Shutdown_priv,grant_priv from user;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="安全连接"><a href="#安全连接" class="headerlink" title="安全连接"></a>安全连接</h3><p><strong>MySQL 5.7默认是开启SSL连接</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;%ssl%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;tls_version&#x27;;</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
-        <category>Technique</category>
+        <category>等保测评</category>
       </categories>
       <tags>
-        <tag>Python</tag>
-        <tag>Scrapy</tag>
+        <tag>MySQL</tag>
       </tags>
   </entry>
   <entry>
@@ -1437,170 +1601,6 @@
       </categories>
       <tags>
         <tag>Oracle</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>等保测评-MySQL相关记录</title>
-    <url>/%E7%AD%89%E4%BF%9D%E6%B5%8B%E8%AF%84/737ad06e.html</url>
-    <content><![CDATA[<h2 id="配置生效时效"><a href="#配置生效时效" class="headerlink" title="配置生效时效"></a>配置生效时效</h2><ol>
-<li><p>修改配置文件，重启MySQL服务生效。</p>
-</li>
-<li><p>SET GLOBAL，仅对当前会话及新会话生效，旧会话不生效，MySQL服务重启后失效。</p>
-</li>
-<li><p>SET SESSION，仅对当前会话生效，其他会话不生效，MySQL服务重启后失效。</p>
-</li>
-</ol>
-<p><strong>修改配置的最优解是SET GLOBAL，然后修改配置文件，可以避免重启MySQL服务，并且MySQL服务重启后配置也能自动生效</strong>。</p>
-<br>
-
-<br>
-
-<br>
-
-<br>
-
-<h2 id="查看安装路径"><a href="#查看安装路径" class="headerlink" title="查看安装路径"></a>查看安装路径</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show variables like &#x27;%basedir%&#x27;;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select @@basedir;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">which</span> mysql</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps -ef | grep mysql</span><br></pre></td></tr></table></figure>
-
-<br>
-
-<br>
-
-<br>
-
-<br>
-
-<h2 id="密码相关参数"><a href="#密码相关参数" class="headerlink" title="密码相关参数"></a>密码相关参数</h2><p><strong>MySQL 5.6.6之后引入</strong>部分参数。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select user,host,password,password_last_changed,password_expired,plugin from mysql.user;</span><br></pre></td></tr></table></figure>
-
-<p><strong><font color="red">password，MySQL 5.7版本后该字段改为authentication_string</font></strong></p>
-<p><strong>password_expired</strong>，该用户的过期时间，Y&#x2F;N</p>
-<p><strong>password_last_changed</strong>，该用户密码最后一次修改的时间</p>
-<p><strong>password_lifetime</strong>，该用户密码的生存时间，默认值为NULL</p>
-<br>
-
-<p><strong>MySQL 5.7.4之后改进</strong>。</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">default_password_lifetime</span>=<span class="number">90</span></span><br></pre></td></tr></table></figure>
-
-<br>
-
-<br>
-
-<br>
-
-<br>
-
-<h2 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h2><p>查看插件的激活状态。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select PLUGIN_NAME,PLUGIN_STATUS,LOAD_OPTION from information_schema.plugins;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show plugins</span><br></pre></td></tr></table></figure>
-
-<br>
-
-<br>
-
-<h3 id="validate-password"><a href="#validate-password" class="headerlink" title="validate_password"></a>validate_password</h3><p>新密码校验插件，<strong>MySQL 5.6.6之后引入，MySQL 5.7之后默认安装</strong>。</p>
-<h4 id="a-配置查询"><a href="#a-配置查询" class="headerlink" title="a. 配置查询"></a>a. 配置查询</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;validate_password%&#x27;;</span><br></pre></td></tr></table></figure>
-
-<br>
-
-<h4 id="b-相关参数"><a href="#b-相关参数" class="headerlink" title="b. 相关参数"></a>b. 相关参数</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 禁止密码与当前用户名一致</span></span><br><span class="line"><span class="attr">validate_password_check_user_name</span>=<span class="literal">OFF</span></span><br><span class="line"><span class="comment"># 限制密码长度最小为8位</span></span><br><span class="line"><span class="attr">validate_password_length</span>=<span class="number">8</span></span><br><span class="line"><span class="comment"># 密码必须包含的大小写字母个数，受validate_password_policy影响。</span></span><br><span class="line"><span class="attr">validate_password_mixed_case_count</span>=<span class="number">1</span></span><br><span class="line"><span class="comment"># 密码必须包含的数字个数，受validate_password_policy影响。</span></span><br><span class="line"><span class="attr">validate_password_number_count</span>=<span class="number">1</span></span><br><span class="line"><span class="comment"># 密码强度检验等级，可以使用数值0、1、2或相应的符号值LOW、MEDIUM、STRONG来指定。</span></span><br><span class="line"><span class="comment"># 0/LOW：只检查长度。</span></span><br><span class="line"><span class="comment"># 1/MEDIUM：检查长度、数字、大小写、特殊字符。</span></span><br><span class="line"><span class="comment"># 2/STRONG：检查长度、数字、大小写、特殊字符、字典文件。</span></span><br><span class="line"><span class="attr">validate_password_policy</span>=<span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<br>
-
-<br>
-
-<br>
-
-<h3 id="connection-control"><a href="#connection-control" class="headerlink" title="connection-control"></a>connection-control</h3><p><strong>MySQL 5.6.35以后提供</strong>。登录失败次数达到阈值后，响应延迟的时间，而不是锁定账号。</p>
-<h4 id="a-配置查询-1"><a href="#a-配置查询-1" class="headerlink" title="a. 配置查询"></a>a. 配置查询</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;connection_control%&#x27;;</span><br></pre></td></tr></table></figure>
-
-<br>
-
-<h4 id="b-相关参数-1"><a href="#b-相关参数-1" class="headerlink" title="b. 相关参数"></a>b. 相关参数</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 记录登录失败的操作到IS库中</span></span><br><span class="line"><span class="attr">connection-control-failed-login-attempts</span>=FORCE_PLUS_PERMANENT</span><br><span class="line"><span class="comment"># 连续登录失败的次数，默认为3次，0表示不启用</span></span><br><span class="line"><span class="attr">connection_control_failed_connections_threshold</span>=<span class="number">3</span></span><br><span class="line"><span class="comment"># 响应延迟的最大时间，单位为毫秒，默认是25天</span></span><br><span class="line"><span class="attr">connection_control_max_connection_delay</span>=<span class="number">2147483647</span></span><br><span class="line"><span class="comment"># 响应延迟的最小时间，单位为毫秒，默认是1分钟，登录失败次数达到阈值后再失败会叠加时间，直到响应延迟的最大时间</span></span><br><span class="line"><span class="attr">connection_control_min_connection_delay</span>=<span class="number">1000</span></span><br></pre></td></tr></table></figure>
-
-<br>
-
-<br>
-
-<br>
-
-<br>
-
-<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><h3 id="一般查询日志（general-log）"><a href="#一般查询日志（general-log）" class="headerlink" title="一般查询日志（general log）"></a>一般查询日志（general log）</h3><p>开启general log能将所有到达MySQL Server的SQL语句记录下来。</p>
-<h4 id="相关参数"><a href="#相关参数" class="headerlink" title="相关参数"></a>相关参数</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 日志开关</span></span><br><span class="line"><span class="attr">general_log</span>=<span class="literal">off</span></span><br><span class="line"><span class="comment"># 日志存放位置</span></span><br><span class="line"><span class="attr">general_log_file</span>=/tmp/general.log</span><br><span class="line"><span class="comment"># 日志输出类型，table/file</span></span><br><span class="line"><span class="attr">log_output</span>=table</span><br></pre></td></tr></table></figure>
-
-<br>
-
-<br>
-
-<h3 id="二进制日志（binlog）"><a href="#二进制日志（binlog）" class="headerlink" title="二进制日志（binlog）"></a>二进制日志（binlog）</h3><p>MySQL的二进制日志可以说是MySQL最重要的日志，记录了所有的DDL和DML语句（更改数据库表和更改内容的SQL语句都会记录到binlog，对数据库的查询select或show等不会被binlog日志记录），以事件形式记录，还包含语句所执行的消耗的时间，MySQL的二进制日志是事务安全型的。<strong>一般来说开启二进制日志大概会有1%的性能损耗</strong>。<br></p>
-<p>二进制日志包括两类文件： </p>
-<ul>
-<li>二进制日志索引文件（文件名后缀为.index）用于记录所有的二进制文件。</li>
-</ul>
-<ul>
-<li>二进制日志文件（文件名后缀为.00000*）记录数据库所有的DDL和DML（除了数据查询语句）语句事件。</li>
-</ul>
-<br>
-
-<h4 id="日志查询"><a href="#日志查询" class="headerlink" title="日志查询"></a>日志查询</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># log_bin，查看binlog日志的启用状态</span><br><span class="line"># log_bin_basename，查看binlog日志的存放位置，ls -l $log_bin_basename查看日志创建的时间</span><br><span class="line">show global variables like &#x27;%log_bin%&#x27;;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 查看所有binlog日志列表</span><br><span class="line">show master logs;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 查看指定日志文件的内容（以表格形式）</span><br><span class="line">show binlog events in &#x27;mysql-bin.000002&#x27;;</span><br></pre></td></tr></table></figure>
-
-<br>
-
-<h4 id="相关参数-1"><a href="#相关参数-1" class="headerlink" title="相关参数"></a>相关参数</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 日志开关</span></span><br><span class="line"><span class="attr">log_bin</span>=<span class="literal">on</span></span><br><span class="line"><span class="comment"># 日志保存时间，默认为0，即永不删除</span></span><br><span class="line"><span class="attr">expire_logs_days</span>=<span class="number">0</span></span><br></pre></td></tr></table></figure>
-
-<br>
-
-<br>
-
-<h3 id="错误日志（errorlog）"><a href="#错误日志（errorlog）" class="headerlink" title="错误日志（errorlog）"></a>错误日志（errorlog）</h3><p>在MySQL数据库中，<strong>默认开启错误日志功能</strong>。一般情况下，错误日志存储在MySQL数据库的数据文件夹下，通常名称为hostname.err。<br></p>
-<h4 id="配置查询"><a href="#配置查询" class="headerlink" title="配置查询"></a>配置查询</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;log_error%&#x27;; </span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;log_warnings%&#x27;;</span><br></pre></td></tr></table></figure>
-
-<br>
-
-<h4 id="相关参数-2"><a href="#相关参数-2" class="headerlink" title="相关参数"></a>相关参数</h4><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">log-error</span>=dir/&#123;filename&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="其他日志"><a href="#其他日志" class="headerlink" title="其他日志"></a>其他日志</h3><p><strong>重做日志（redo log）</strong> 、<strong>回滚日志（undo log）</strong> 、<strong>慢查询日志（slow query log）</strong> 、<strong>中继日志（relay log）</strong>等等不做了解。</p>
-<br>
-
-<br>
-
-<br>
-
-<br>
-
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="flush-privileges"><a href="#flush-privileges" class="headerlink" title="flush privileges"></a>flush privileges</h3><p>本质上的作用是将当前user和privilige表中的用户信息&#x2F;权限设置从mysql库（MySQL数据库的内置库）中提取到内存里。MySQL用户数据和权限有修改后，希望在”不重启MySQL服务”的情况下直接生效，那么就需要执行这个命令。通常是在修改root帐号的设置后，怕重启后无法再登录进来，那么直接flush之后就可以看权限设置是否生效。而不必冒太大风险。</p>
-<br>
-
-<h3 id="用户权限"><a href="#用户权限" class="headerlink" title="用户权限"></a>用户权限</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select Host,User,File_priv,Shutdown_priv,grant_priv from user;</span><br></pre></td></tr></table></figure>
-
-<br>
-
-<h3 id="安全连接"><a href="#安全连接" class="headerlink" title="安全连接"></a>安全连接</h3><p><strong>MySQL 5.7默认是开启SSL连接</strong>。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;%ssl%&#x27;;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">show global variables like &#x27;tls_version&#x27;;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>等保测评</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
       </tags>
   </entry>
 </search>
